@@ -8,16 +8,23 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/landing.css">
+  <script src="js/i18n.js" defer></script>
+  <style>
+    /* Partículas adaptadas para fundo claro */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
-<body>
+<body data-page="index">
 <!-- Particles Canvas -->
 <canvas id="particles-canvas"></canvas>
 
-<!-- Hero Background -->
-<div class="hero-bg"></div>
-
 <!-- URGENCY BAR -->
-<div class="urgency-bar">
+<div class="urgency-bar" data-i18n="urgency_bar">
   ⚠️ &nbsp;Este diagnóstico é rastreado por IP — pode ser realizado <strong>apenas uma vez por pessoa</strong>
 </div>
 
@@ -27,7 +34,7 @@
     <div class="container" style="display:flex;flex-direction:column;align-items:center;gap:0;">
 
       <!-- Badge -->
-      <div class="badge badge-amber animate-fade-in-down" style="margin-bottom:1.5rem;">
+      <div class="badge badge-amber animate-fade-in-down" style="margin-bottom:1.5rem;" data-i18n="badge_diagnostic">
         🔬 Diagnóstico Gratuito e Personalizado
       </div>
 
@@ -38,7 +45,7 @@
       </h1>
 
       <!-- Sub headline -->
-      <p class="hook-subheadline animate-fade-in-up delay-200">
+      <p class="hook-subheadline animate-fade-in-up delay-200" data-i18n="subheadline">
         Este diagnóstico gratuito foi desenvolvido para <strong>mulheres acima dos 45 anos</strong> que acordam com o corpo travado, não conseguem dormir direito e já tentaram de tudo — sem resultado duradouro.
       </p>
 
@@ -61,9 +68,9 @@
       <div class="cta-section animate-fade-in-up delay-400">
         <div style="position:relative;width:100%;max-width:500px;">
           <!-- Rings -->
-          <div style="position:absolute;inset:-8px;border-radius:9999px;border:2px solid rgba(16,185,129,0.3);animation:pulse-ring 2s ease-out infinite;pointer-events:none;"></div>
-          <div style="position:absolute;inset:-16px;border-radius:9999px;border:1px solid rgba(16,185,129,0.15);animation:pulse-ring 2s ease-out infinite 0.5s;pointer-events:none;"></div>
-          <a href="quiz.html" class="btn btn-cta" id="start-btn">
+          <div style="position:absolute;inset:-8px;border-radius:9999px;border:2px solid rgba(5,150,105,0.25);animation:pulse-ring 2s ease-out infinite;pointer-events:none;"></div>
+          <div style="position:absolute;inset:-16px;border-radius:9999px;border:1px solid rgba(5,150,105,0.12);animation:pulse-ring 2s ease-out infinite 0.5s;pointer-events:none;"></div>
+          <a href="quiz.html" class="btn btn-cta" id="start-btn" data-i18n="start_btn">
             → INICIAR MEU DIAGNÓSTICO GRATUITO AGORA
           </a>
         </div>
@@ -102,13 +109,13 @@
         <div class="fascination-item">
           <div class="fascination-bullet">📋</div>
           <div class="fascination-text">
-            Qual dos <strong>3 Perfis de Ferrugem Articular</strong> é o seu — e qual protocolo exato de 15 minutos corresponde ao seu grau de dor
+            Qual dos <strong>3 Perfis de Ferrugem Articular</strong> é o seu — e qual protocolo exato de 15 minutos de Tai Chi corresponde ao seu grau de dor
           </div>
         </div>
         <div class="fascination-item">
           <div class="fascination-bullet">✨</div>
           <div class="fascination-text">
-            Por que mulheres com <strong>artrose grau 3, bico de papagaio e hérnia</strong> estão conseguindo se destravar com movimentos que parecem ridiculamente simples
+            Por que mulheres com <strong>artrose grau 3, bico de papagaio e hérnia</strong> estão conseguindo se destravar com movimentos milenares que parecem ridiculamente simples
           </div>
         </div>
       </div>
@@ -120,7 +127,7 @@
         <div class="testimonial-card">
           <div class="stars">★★★★★</div>
           <p class="testimonial-text">
-            "Eu achei que era perda de tempo responder um questionário. Mas quando li o meu resultado, chorei. Pela primeira vez alguém descreveu exatamente o que eu sinto todo dia. E em 4 dias fazendo os 15 minutinhos, dormi a noite toda sem acordar."
+            "Eu achei que era perda de tempo responder um questionário. Mas quando li o meu resultado, chorei. Pela primeira vez alguém descreveu exatamente o que eu sinto todo dia. E em 4 dias fazendo os 15 minutinhos do Tai Chi, dormi a noite toda sem acordar."
           </p>
           <div class="testimonial-author">
             <div class="testimonial-avatar">R</div>
@@ -162,7 +169,7 @@
 
       <!-- Second CTA -->
       <div class="cta-section animate-fade-in-up delay-700">
-        <a href="quiz.html" class="btn btn-cta">
+        <a href="quiz.html" class="btn btn-cta" data-i18n="start_btn">
           → INICIAR MEU DIAGNÓSTICO GRATUITO AGORA
         </a>
         <div class="cta-meta">
@@ -184,7 +191,7 @@
 </section>
 
 <script>
-// Particles
+// Particles — adaptado para fundo claro (partículas escuras sutis)
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
@@ -200,14 +207,14 @@ function createParticle() {
   return {
     x: Math.random() * canvas.width,
     y: canvas.height + 10,
-    size: Math.random() * 3 + 1,
-    speed: Math.random() * 0.6 + 0.2,
-    opacity: Math.random() * 0.5 + 0.1,
+    size: Math.random() * 2 + 0.5,
+    speed: Math.random() * 0.5 + 0.1,
+    opacity: Math.random() * 0.12 + 0.04,
     hue: Math.random() > 0.5 ? 200 : 150
   };
 }
 
-for(let i = 0; i < 40; i++) {
+for(let i = 0; i < 30; i++) {
   const p = createParticle();
   p.y = Math.random() * canvas.height;
   particles.push(p);
@@ -221,7 +228,7 @@ function animateParticles() {
     if(p.y < -10) { particles[i] = createParticle(); }
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${p.opacity})`;
+    ctx.fillStyle = `hsla(${p.hue}, 60%, 40%, ${p.opacity})`;
     ctx.fill();
   });
   requestAnimationFrame(animateParticles);
@@ -245,12 +252,6 @@ document.querySelectorAll('.btn').forEach(btn => {
     setTimeout(() => circle.remove(), 600);
   });
 });
-
-// Scroll reveal
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('revealed'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.js-reveal').forEach(el => revealObserver.observe(el));
 </script>
 </body>
 </html>

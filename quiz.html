@@ -8,8 +8,9 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/quiz.css">
+  <script src="js/i18n.js" defer><\/script>
 </head>
-<body class="quiz-page">
+<body class="quiz-page" data-page="quiz">
 
 <!-- QUIZ HEADER -->
 <header class="quiz-header">
@@ -117,13 +118,13 @@ const QUESTIONS = [
     subtitle: 'Pode selecionar mais de uma opção',
     multi: true,
     options: [
-      { text: 'Lombar (parte baixa das costas)', icon: '🔴', score: 2 },
-      { text: 'Joelhos', icon: '🔴', score: 2 },
-      { text: 'Pescoço e trapézio (ombros)', icon: '🔴', score: 2 },
-      { text: 'Quadril', icon: '🔴', score: 2 },
-      { text: 'Calcanhar / planta do pé', icon: '🔴', score: 2 },
-      { text: 'Mãos e dedos', icon: '🔴', score: 2 },
-      { text: 'Toda a coluna', icon: '🔴', score: 4 }
+      { text: 'Lombar (parte baixa das costas)', img: 'imgs/body_lombar.png', score: 2 },
+      { text: 'Joelhos', img: 'imgs/body_joelhos.png', score: 2 },
+      { text: 'Pescoço e trapézio (ombros)', img: 'imgs/body_pescoco.png', score: 2 },
+      { text: 'Quadril', img: 'imgs/body_quadril.png', score: 2 },
+      { text: 'Calcanhar / planta do pé', img: 'imgs/body_calcanhar.png', score: 2 },
+      { text: 'Mãos e dedos', img: 'imgs/body_maos.png', score: 2 },
+      { text: 'Toda a coluna', img: 'imgs/body_coluna.png', score: 4 }
     ]
   },
   {
@@ -330,7 +331,7 @@ const QUESTIONS = [
   },
   {
     block: 3,
-    text: 'Se o seu corpo pudesse produzir o seu próprio "lubrificante natural" de volta — eliminando a queimação nas juntas e desligando a sua mente antes de dormir — sem remédios e sem academia, isso seria algo que você gostaria de aprender a ativar?',
+    text: 'Mestres de Tai Chi aos 80 anos têm articulações de 50. O segredo: micromovimentos circulares que agem como uma bomba de lubrificação interna. Se o seu corpo pudesse ativar esse "Fluxo Natural" — eliminando a queimação nas juntas e desligando a sua mente antes de dormir — sem remédios e sem academia, isso seria algo que você gostaria de aprender?',
     multi: false,
     options: [
       { text: 'Sim, absolutamente — é exatamente isso que eu preciso', icon: '🎯', score: 5 },
@@ -492,8 +493,19 @@ function buildQuestion(q, container, direction) {
       btn.appendChild(letter);
     }
 
+    // 3D Body image (if option has img field)
+    if(opt.img) {
+      const imgEl = document.createElement('img');
+      imgEl.src = opt.img;
+      imgEl.alt = opt.text;
+      imgEl.className = 'option-img';
+      imgEl.loading = 'lazy';
+      btn.appendChild(imgEl);
+    }
+
     // Text
     const span = document.createElement('span');
+    span.style.flex = '1';
     span.textContent = (opt.icon ? opt.icon + ' ' : '') + opt.text;
     btn.appendChild(span);
 
@@ -629,6 +641,16 @@ function showBlockUnlock(unlock, callback) {
   const container = document.getElementById('question-container');
   container.innerHTML = '';
 
+  // ✅ BUGFIX: garantir que o callback seja chamado APENAS UMA VEZ
+  // O bug anterior: o botão chamava callback() e depois o setTimeout
+  // também chamava, fazendo o quiz pular 2 perguntas de uma vez.
+  let _called = false;
+  const onceCb = () => {
+    if (_called) return;
+    _called = true;
+    callback();
+  };
+
   const wrap = document.createElement('div');
   wrap.className = 'block-unlock card';
   wrap.innerHTML = `
@@ -641,10 +663,10 @@ function showBlockUnlock(unlock, callback) {
   `;
   container.appendChild(wrap);
 
-  wrap.querySelector('button').addEventListener('click', callback);
+  wrap.querySelector('button').addEventListener('click', onceCb);
 
-  // Auto-advance after 3s
-  setTimeout(callback, 3000);
+  // Auto-advance after 3s — usa onceCb para evitar dupla execução
+  setTimeout(onceCb, 3000);
 }
 
 // ─── IMC CALCULATOR ───────────────────────────────────────────

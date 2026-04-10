@@ -8,23 +8,23 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/landing.css">
+  <script src="js/i18n.js" defer></script>
   <style>
     body {
-      background:
-        radial-gradient(ellipse at 20% 0%, rgba(30,77,140,0.2) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 100%, rgba(16,185,129,0.12) 0%, transparent 50%),
-        linear-gradient(160deg, #050c1a 0%, #080e1a 60%, #0a1525 100%);
+      background: #ffffff;
+      color: var(--text-primary);
     }
 
     /* ─── HEADER ─── */
     .result-top-bar {
-      background: rgba(8,14,26,0.95);
+      background: rgba(255,255,255,0.96);
       border-bottom: 1px solid var(--color-border);
       padding: var(--space-md);
       position: sticky;
       top: 0;
       z-index: 100;
       backdrop-filter: blur(12px);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     }
     .result-top-inner {
       max-width: 720px;
@@ -37,13 +37,13 @@
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      background: rgba(16,185,129,0.15);
-      border: 1px solid rgba(16,185,129,0.3);
+      background: rgba(5,150,105,0.1);
+      border: 1px solid rgba(5,150,105,0.25);
       border-radius: var(--radius-full);
       padding: 0.3rem 0.75rem;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--color-green-light);
+      color: var(--color-green);
       white-space: nowrap;
     }
 
@@ -57,37 +57,117 @@
     .result-headline {
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 4vw, 2.1rem);
-      font-weight: 800;
+      font-weight: 700;
       line-height: 1.3;
       text-align: center;
       margin: var(--space-xl) 0 var(--space-md);
+      color: var(--text-primary);
     }
     .result-sub {
       text-align: center;
       color: var(--text-muted);
       font-size: 0.95rem;
       line-height: 1.7;
-      margin-bottom: var(--space-xl);
+      margin-bottom: var(--space-lg);
       max-width: 560px;
       margin-inline: auto;
     }
 
+    /* ─── VIDEO SECTION (primeiro elemento, logo abaixo do headline) ─── */
+    .video-section {
+      margin-bottom: var(--space-xl);
+    }
+    .video-label {
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--color-amber);
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      animation: pulse-amber 2s infinite;
+    }
+    .video-wrapper-result {
+      width: 100%;
+      border: 2px solid rgba(217,119,6,0.25);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .video-placeholder {
+      background: #111827;
+      aspect-ratio: 16/9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      color: white;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .video-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(30,77,140,0.5), rgba(5,150,105,0.15));
+    }
+    .play-btn-big {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(217,119,6,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      cursor: pointer;
+      animation: pulse-amber 2s infinite;
+      position: relative;
+      z-index: 1;
+      transition: all var(--dur-normal) var(--ease-bounce);
+    }
+    .play-btn-big:hover {
+      transform: scale(1.1);
+    }
+    .video-title-overlay {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+      max-width: 320px;
+      position: relative;
+      z-index: 1;
+    }
+    .video-sublabel {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      font-style: italic;
+    }
+
     /* ─── PROFILE RESULT CARD ─── */
     .profile-card {
-      background: linear-gradient(135deg, rgba(17,28,48,0.95), rgba(22,35,64,0.9));
-      border: 2px solid rgba(245,158,11,0.3);
+      background: #ffffff;
+      border: 2px solid rgba(217,119,6,0.25);
       border-radius: var(--radius-xl);
       padding: var(--space-xl);
       margin-bottom: var(--space-xl);
       position: relative;
       overflow: hidden;
+      box-shadow: var(--shadow-card);
     }
     .profile-card::before {
       content: '';
       position: absolute;
       top: -50%; left: -50%;
       width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(245,158,11,0.04) 0%, transparent 60%);
+      background: radial-gradient(circle, rgba(217,119,6,0.03) 0%, transparent 60%);
       pointer-events: none;
     }
     .profile-label {
@@ -101,8 +181,9 @@
     .profile-name {
       font-family: var(--font-display);
       font-size: 1.6rem;
-      font-weight: 800;
+      font-weight: 700;
       margin-bottom: 0.5rem;
+      color: var(--text-primary);
     }
     .profile-desc {
       font-size: 0.9rem;
@@ -122,7 +203,7 @@
     .ferrugem-bar {
       height: 12px;
       border-radius: var(--radius-full);
-      background: rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.07);
       overflow: hidden;
     }
     .ferrugem-fill {
@@ -130,78 +211,6 @@
       border-radius: var(--radius-full);
       transition: width 1.5s var(--ease-smooth);
       position: relative;
-    }
-
-    /* ─── VIDEO SECTION ─── */
-    .video-section {
-      margin-bottom: var(--space-xl);
-    }
-    .video-label {
-      text-align: center;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--color-amber-light);
-      margin-bottom: var(--space-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-    }
-    .video-wrapper {
-      border: 2px solid rgba(245,158,11,0.2);
-    }
-    .video-placeholder {
-      background: #000;
-      aspect-ratio: 16/9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-md);
-      color: white;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-    .video-placeholder::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(160deg, rgba(30,77,140,0.4), rgba(16,185,129,0.1));
-    }
-    .play-btn-big {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: rgba(245,158,11,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      cursor: pointer;
-      animation: pulse-amber 2s infinite;
-      position: relative;
-      z-index: 1;
-      transition: all var(--dur-normal) var(--ease-bounce);
-    }
-    .play-btn-big:hover {
-      transform: scale(1.1);
-    }
-    .video-title-overlay {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-align: center;
-      max-width: 320px;
-      position: relative;
-      z-index: 1;
-    }
-    .video-sublabel {
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 0.75rem;
-      font-style: italic;
     }
 
     /* ─── ANALYSIS ANIMATION ─── */
@@ -218,12 +227,13 @@
       margin-bottom: var(--space-md);
     }
     .analysis-card {
-      background: var(--color-card);
+      background: #ffffff;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-xl);
       padding: var(--space-xl);
       overflow: hidden;
       position: relative;
+      box-shadow: var(--shadow-card);
     }
     .analysis-stats {
       display: grid;
@@ -234,8 +244,9 @@
     .stat-item {
       text-align: center;
       padding: var(--space-md);
-      background: rgba(255,255,255,0.03);
+      background: rgba(0,0,0,0.02);
       border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
     }
     .stat-value {
       font-size: 1.8rem;
@@ -275,7 +286,7 @@
       font-style: italic;
     }
 
-    /* ─── CTA SECTION (injected) ─── */
+    /* ─── CTA SECTION ─── */
     #cta-area {
       max-width: 560px;
       margin: 0 auto;
@@ -287,15 +298,15 @@
       max-width: 560px;
       margin: var(--space-xl) auto 0;
       padding: var(--space-lg);
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.2);
+      background: rgba(220,38,38,0.05);
+      border: 1px solid rgba(220,38,38,0.15);
       border-radius: var(--radius-lg);
       text-align: center;
     }
     .urgency-title {
       font-size: 0.85rem;
       font-weight: 700;
-      color: #fca5a5;
+      color: #dc2626;
       margin-bottom: 0.3rem;
     }
     .urgency-timer {
@@ -303,7 +314,7 @@
       color: var(--text-muted);
     }
 
-    /* ─── SOCIAL PROOF ─── */
+    /* ─── MINI TESTIMONIALS ─── */
     .mini-testimonials {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -312,17 +323,18 @@
     }
     @media (max-width: 480px) { .mini-testimonials { grid-template-columns: 1fr; } }
     .mini-t {
-      background: var(--color-card);
+      background: #ffffff;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
       padding: var(--space-md);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
     .mini-t-stars { color: var(--color-amber); font-size: 0.7rem; margin-bottom: 0.3rem; }
     .mini-t-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.5rem; font-style: italic; }
     .mini-t-name { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
   </style>
 </head>
-<body>
+<body data-page="result">
 
 <!-- TOP BAR -->
 <div class="result-top-bar">
@@ -339,20 +351,52 @@
 <div class="result-content">
 
   <!-- Headline -->
-  <h1 class="result-headline animate-fade-in-up">
+  <h1 class="result-headline animate-fade-in-up" data-i18n="result_headline">
     Seus Resultados Estão <span class="gradient-text">Prontos</span>
   </h1>
-  <p class="result-sub animate-fade-in-up delay-100">
+  <p class="result-sub animate-fade-in-up delay-100" data-i18n="result_sub">
     Enquanto nosso sistema finaliza o seu diagnóstico personalizado, assista ao vídeo abaixo — ele explica exatamente o que as suas respostas revelaram.
   </p>
 
-  <!-- Profile Card -->
-  <div class="profile-card animate-fade-in-up delay-200" id="profile-card">
+  <!-- ─── VÍDEO PRIMEIRO (movido para cima) ─── -->
+  <div class="video-section animate-fade-in-up delay-200">
+    <div class="video-label">
+      🔊 Ative o som e assista agora — dura menos de 3 minutos
+    </div>
+    <div class="video-wrapper-result">
+      <!-- Sound button -->
+      <button class="sound-btn" id="sound-btn" onclick="toggleSound()">
+        🔇 Ativar Som
+      </button>
+
+      <!-- Video placeholder -->
+      <div class="video-placeholder" id="video-placeholder" onclick="playVideo()">
+        <div class="play-btn-big">▶</div>
+        <div class="video-title-overlay">
+          Como o Fluxo do Tai Chi vai destravar as suas articulações em apenas 15 minutos
+        </div>
+      </div>
+
+      <!-- Actual iframe -->
+      <iframe
+        id="video-frame"
+        src="about:blank"
+        data-src="https://www.youtube.com/embed/VIDEO_ID_HERE?autoplay=1&mute=1&rel=0"
+        style="display:none;width:100%;aspect-ratio:16/9;border:none;"
+        allow="autoplay; fullscreen"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="video-sublabel">⏳ O botão para acessar seu protocolo aparece ao final do vídeo.</div>
+  </div>
+
+  <!-- ─── PROFILE CARD (agora após o vídeo) ─── -->
+  <div class="profile-card animate-fade-in-up delay-300" id="profile-card">
     <div class="profile-label">🔬 Seu Perfil de Ferrugem Articular</div>
     <div class="profile-name gradient-text" id="profile-name">Carregando...</div>
     <div class="profile-desc" id="profile-desc">Analisando suas respostas...</div>
 
-    <!-- IMC inline badge (populated by JS) -->
+    <!-- IMC inline badge -->
     <div id="imc-profile-badge" style="display:none;margin-top:1rem;"></div>
 
     <div class="ferrugem-meter">
@@ -364,38 +408,6 @@
         <div class="ferrugem-fill" id="ferrugem-fill" style="width:0%;"></div>
       </div>
     </div>
-  </div>
-
-  <!-- Video Section -->
-  <div class="video-section animate-fade-in-up delay-300">
-    <div class="video-label">
-      ▶ Ative o som e assista agora — dura menos de 3 minutos
-    </div>
-    <div class="video-wrapper" style="border-radius:var(--radius-lg);overflow:hidden;position:relative;">
-      <!-- Sound button -->
-      <button class="sound-btn" id="sound-btn" onclick="toggleSound()">
-        🔇 Ativar Som
-      </button>
-
-      <!-- Video placeholder — replace src with actual video URL -->
-      <div class="video-placeholder" id="video-placeholder" onclick="playVideo()">
-        <div class="play-btn-big">▶</div>
-        <div class="video-title-overlay">
-          Como o Protocolo Movimento da Esponja vai destravar as suas articulações em apenas 15 minutos
-        </div>
-      </div>
-
-      <!-- Actual iframe (hidden until clicked) -->
-      <iframe
-        id="video-frame"
-        src="about:blank"
-        data-src="https://www.youtube.com/embed/VIDEO_ID_HERE?autoplay=1&mute=1&rel=0"
-        style="display:none;width:100%;aspect-ratio:16/9;border:none;"
-        allow="autoplay; fullscreen"
-        allowfullscreen>
-      </iframe>
-    </div>
-    <div class="video-sublabel">⏳ O botão para acessar seu protocolo aparece ao final do vídeo.</div>
   </div>
 
   <!-- Analysis Animation Block -->
@@ -421,8 +433,8 @@
           <div class="analysis-step-check">✓</div>
         </div>
         <div class="analysis-step" id="as-3">
-          <div class="analysis-step-icon">🎯</div>
-          <div class="analysis-step-text">Selecionando sequência de micromovimentos ideal para o seu perfil...</div>
+          <div class="analysis-step-icon">🥋</div>
+          <div class="analysis-step-text">Selecionando sequência de Tai Chi ideal para o seu perfil...</div>
           <div class="analysis-step-check">✓</div>
         </div>
         <div class="analysis-step" id="as-4">
@@ -470,7 +482,7 @@
   <div class="mini-testimonials animate-fade-in-up delay-500">
     <div class="mini-t">
       <div class="mini-t-stars">★★★★★</div>
-      <div class="mini-t-text">"Em 4 dias fazendo os 15 minutinhos, dormi a noite toda sem acordar."</div>
+      <div class="mini-t-text">"Em 4 dias fazendo os 15 minutinhos do Tai Chi, dormi a noite toda sem acordar."</div>
       <div class="mini-t-name">Rosângela M., 57 anos</div>
     </div>
     <div class="mini-t">
@@ -480,7 +492,7 @@
     </div>
   </div>
 
-  <!-- CTA Area (button injected after 1m50s) -->
+  <!-- CTA Area -->
   <div id="cta-area"></div>
 
   <!-- Urgency section -->
@@ -499,51 +511,49 @@ const profiles = [
   {
     min: 0, max: 50,
     name: 'Ferrugem Leve — Grau 1',
-    desc: 'Suas articulações mostram sinais iniciais de desidratação fascial. O cortisol elevado está começando a afetar sua mobilidade. A boa notícia: este é o momento ideal para reverter o processo.',
+    desc: 'Suas articulações mostram sinais iniciais de desidratação fascial. O cortisol elevado está começando a afetar sua mobilidade. Este é o momento ideal para ativar o Fluxo do Tai Chi e reverter o processo.',
     pct: 35, color: '#f59e0b', grade: 'Grau 1'
   },
   {
     min: 51, max: 90,
     name: 'Ferrugem Moderada — Grau 2',
-    desc: 'Seu nível de cortisol crônico está desidratando a fáscia de forma significativa. A rigidez matinal e as dores recorrentes são sinais claros de que seu sistema nervoso está em alerta há muito tempo.',
+    desc: 'Seu nível de cortisol crônico está desidratando a fáscia de forma significativa. A rigidez matinal e as dores recorrentes são sinais claros de que seu sistema nervoso está em alerta há muito tempo. Os micromovimentos do Tai Chi atuam diretamente nessa raiz.',
     pct: 58, color: '#ef4444', grade: 'Grau 2'
   },
   {
     min: 91, max: 130,
     name: 'Ferrugem Severa — Grau 3',
-    desc: 'Seu diagnóstico revela intoxicação crônica por cortisol com desidratação fascial avançada. Seus ossos estão raspando diretamente por falta de lubrificação. Este é o perfil que mais se beneficia do Protocolo Movimento da Esponja.',
+    desc: 'Seu diagnóstico revela intoxicação crônica por cortisol com desidratação fascial avançada. Os movimentos circulares do Tai Chi agem como uma bomba de lubrificação interna — reativando a produção de líquido sinovial nas suas juntas. Este é o perfil que mais se beneficia do Protocolo.',
     pct: 78, color: '#7c3aed', grade: 'Grau 3'
   },
   {
     min: 131, max: 9999,
     name: 'Ferrugem Crítica — Grau 4',
-    desc: 'Seu sistema nervoso está em colapso de estresse crônico. A desidratação fascial atingiu nível crítico, explicando a intensidade das suas dores e a insônia severa. O protocolo selecionado para você foca em regeneração profunda.',
+    desc: 'Seu sistema nervoso está em colapso de estresse crônico. A desidratação fascial atingiu nível crítico. O protocolo de Tai Chi selecionado para você foca em regeneração profunda — ativando a produção natural de lubrificante articular sem nenhum esforço ou impacto.',
     pct: 92, color: '#ef4444', grade: 'Grau 4'
   }
 ];
 
 const profile = profiles.find(p => score >= p.min && score <= p.max) || profiles[2];
 
-// ─── IMC DATA ─────────────────────────────────────────────────
+// ─── IMC DATA ──────────────────────────────────────────────────
 const imcValor     = parseFloat(sessionStorage.getItem('imc_valor'))   || null;
 const imcCategoria = sessionStorage.getItem('imc_categoria') || null;
 const imcCor       = sessionStorage.getItem('imc_cor')       || null;
 
-// Extra copy about IMC's impact on joints
 function getIMCJointCopy(imc, cat) {
   if(!imc) return '';
-  if(imc < 18.5) return ` Aliado ao seu IMC de <strong>${imc}</strong> (abaixo do peso ideal), isso reduz a densidade que protege suas articulações — tornando-as ainda mais vulneráveis ao cortisol.`;
+  if(imc < 18.5) return ` Aliado ao seu IMC de <strong>${imc}</strong> (abaixo do peso ideal), isso reduz o amortecimento das suas articulações — tornando-as ainda mais vulneráveis ao cortisol.`;
   if(imc < 25)   return ` Seu IMC de <strong>${imc}</strong> está saudável — o que confirma que o peso <em>não é o culpado</em>. O seu problema é puramente bioquímico: cortisol destruindo a fáscia.`;
   if(imc < 30)   return ` Com IMC de <strong>${imc}</strong> (sobrepeso), cada passo adiciona até <strong>6× mais pressão</strong> nos seus joelhos — combinando com o cortisol para criar uma tempestade perfeita de dor.`;
-  if(imc < 35)   return ` Seu IMC de <strong>${imc}</strong> (obesidade grau 1) explica por que a dor é tão constante: as suas articulações suportam uma carga muito acima do projetado, agravada pelo cortisol crônico.`;
-  return ` Com IMC de <strong>${imc}</strong>, as suas articulações carregam uma pressão que nenhum medicamento consegue compensar a longo prazo — o Protocolo age diretamente na raiz do problema.`;
+  if(imc < 35)   return ` Seu IMC de <strong>${imc}</strong> (obesidade grau 1) explica por que a dor é tão constante — as suas articulações suportam uma carga muito acima do projetado, agravada pelo cortisol crônico.`;
+  return ` Com IMC de <strong>${imc}</strong>, as suas articulações carregam uma pressão que nenhum medicamento consegue compensar a longo prazo — o Protocolo Tai Chi age diretamente na raiz do problema.`;
 }
 
 // Populate profile card
 setTimeout(() => {
   document.getElementById('profile-name').textContent = profile.name;
 
-  // Enrich desc with IMC copy
   const imcCopy = getIMCJointCopy(imcValor, imcCategoria);
   document.getElementById('profile-desc').innerHTML = profile.desc + (imcCopy ? '<br><br>' + imcCopy : '');
 
@@ -554,7 +564,6 @@ setTimeout(() => {
   document.getElementById('stat-score').textContent = score;
   document.getElementById('stat-profile').textContent = profile.grade;
 
-  // IMC stat
   const imcStatEl = document.getElementById('stat-imc');
   if(imcValor && imcStatEl) {
     imcStatEl.textContent = imcValor;
@@ -563,7 +572,6 @@ setTimeout(() => {
     imcStatEl.textContent = 'N/A';
   }
 
-  // IMC badge below profile text
   if(imcValor && imcCategoria) {
     const badgeEl = document.getElementById('imc-profile-badge');
     badgeEl.style.display = 'flex';
@@ -571,24 +579,13 @@ setTimeout(() => {
     badgeEl.style.gap = '0.75rem';
     badgeEl.style.flexWrap = 'wrap';
     badgeEl.innerHTML = `
-      <div style="
-        display:inline-flex;align-items:center;gap:0.4rem;
-        background:${imcCor}22;border:1px solid ${imcCor}44;
-        border-radius:9999px;padding:0.35rem 0.9rem;
-        font-size:0.78rem;font-weight:700;color:${imcCor};
-      ">⚖️ IMC: ${imcValor}</div>
-      <div style="
-        display:inline-flex;align-items:center;gap:0.4rem;
-        background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-        border-radius:9999px;padding:0.35rem 0.9rem;
-        font-size:0.78rem;font-weight:600;color:var(--text-muted);
-      ">${imcCategoria}</div>
+      <div style="display:inline-flex;align-items:center;gap:0.4rem;background:${imcCor}18;border:1px solid ${imcCor}35;border-radius:9999px;padding:0.35rem 0.9rem;font-size:0.78rem;font-weight:700;color:${imcCor};">⚖️ IMC: ${imcValor}</div>
+      <div style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.1);border-radius:9999px;padding:0.35rem 0.9rem;font-size:0.78rem;font-weight:600;color:var(--text-muted);">${imcCategoria}</div>
     `;
   }
 }, 800);
 
 // ─── ANALYSIS STEPS ANIMATION ────────────────────────────────
-const analysisSteps = [0, 1, 2, 3, 4];
 const delays = [1000, 4000, 8000, 13000, 18000];
 delays.forEach((delay, i) => {
   setTimeout(() => {
@@ -636,7 +633,7 @@ function toggleSound() {
   const frame = document.getElementById('video-frame');
   const src = frame.src;
   if(isMuted) {
-    frame.src = src.replace('mute=0', 'mute=1').replace('mute=1', 'mute=1');
+    frame.src = src.replace('mute=0', 'mute=1');
     document.getElementById('sound-btn').innerHTML = '🔇 Ativar Som';
   } else {
     frame.src = src.replace('mute=1', 'mute=0');
@@ -650,7 +647,7 @@ function toggleSound() {
 // Auto-start video on load
 setTimeout(() => { playVideo(); }, 500);
 
-// ─── COUNTDOWN 24H (localStorage) ────────────────────────────
+// ─── COUNTDOWN 24H ────────────────────────────────────────────
 function getOrSetExpiry() {
   const key = 'taichi_expiry';
   let expiry = localStorage.getItem(key);
@@ -673,64 +670,41 @@ const expiry = getOrSetExpiry();
 function updateTimer() {
   const remaining = expiry - Date.now();
   const el = document.getElementById('urgency-timer');
-  if(el) el.innerHTML = `⏰ <strong style="color:#ef4444;font-size:1rem;">${formatCountdown(remaining)}</strong> — Este acesso especial expira em breve`;
+  if(el) el.innerHTML = `⏰ <strong style="color:#dc2626;font-size:1rem;">${formatCountdown(remaining)}</strong> — Este acesso especial expira em breve`;
 }
 updateTimer();
 setInterval(updateTimer, 1000);
 
 // ─── DELAYED BUTTON (1 min 50 sec = 110,000ms) ───────────────
-// Button is NOT in the DOM — injected after exactly 110 seconds
 setTimeout(() => {
   const ctaArea = document.getElementById('cta-area');
 
-  // Anchor text
   const anchor = document.createElement('p');
   anchor.style.cssText = `
-    text-align:center;
-    font-size:0.95rem;
-    font-weight:700;
-    color:var(--color-green-light);
-    margin-bottom:1rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:0.4rem;
-    animation:fadeInDown 0.6s ease;
+    text-align:center;font-size:0.95rem;font-weight:700;
+    color:var(--color-green);margin-bottom:1rem;
+    display:flex;align-items:center;justify-content:center;
+    gap:0.4rem;animation:fadeInDown 0.6s ease;
   `;
   anchor.innerHTML = '✅ Seu diagnóstico foi concluído. O protocolo indicado para o seu perfil está disponível abaixo.';
 
-  // Button
   const btn = document.createElement('a');
   btn.href = 'oferta.html';
   btn.id = 'main-cta-btn';
   btn.style.cssText = `
-    display:block;
-    width:100%;
-    max-width:500px;
-    margin:0 auto 1rem;
-    padding:1.4rem 2rem;
-    background:linear-gradient(135deg,#16a34a,#10b981,#059669);
-    color:white;
-    font-weight:900;
-    font-size:1.05rem;
-    border-radius:9999px;
-    text-align:center;
-    box-shadow:0 0 40px rgba(16,185,129,0.5),0 8px 32px rgba(0,0,0,0.3);
+    display:block;width:100%;max-width:500px;margin:0 auto 1rem;
+    padding:1.4rem 2rem;background:linear-gradient(135deg,#047857,#10b981,#059669);
+    color:white;font-weight:900;font-size:1.05rem;border-radius:9999px;
+    text-align:center;box-shadow:0 0 30px rgba(5,150,105,0.3),0 8px 32px rgba(0,0,0,0.1);
     animation:fadeIn 1s ease, pulse-cta 2.5s 1s infinite;
-    text-transform:uppercase;
-    letter-spacing:0.02em;
-    text-decoration:none;
+    text-transform:uppercase;letter-spacing:0.02em;text-decoration:none;
   `;
   btn.innerHTML = '→ QUERO MEU PROTOCOLO AGORA — R$ 19,90';
 
-  // Sub text
   const sub = document.createElement('div');
   sub.style.cssText = `
-    text-align:center;
-    font-size:0.78rem;
-    color:var(--text-muted);
-    animation:fadeIn 1.2s ease;
-    margin-bottom:1rem;
+    text-align:center;font-size:0.78rem;color:var(--text-muted);
+    animation:fadeIn 1.2s ease;margin-bottom:1rem;
   `;
   sub.innerHTML = '🔒 Pagamento seguro | Acesso imediato | Sem assinatura';
 
@@ -738,17 +712,11 @@ setTimeout(() => {
   ctaArea.appendChild(btn);
   ctaArea.appendChild(sub);
 
-  // Show urgency section
   document.getElementById('urgency-section').style.display = 'block';
   document.getElementById('urgency-section').style.animation = 'fadeInUp 0.6s ease';
 
-  // Scroll to button
   btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}, 110000); // 1 minute 50 seconds
-
-// ─── DEBUG: For testing, also add a dev shortcut ──────────────
-// Remove this in production:
-// setTimeout(() => { /* same as above but at 5s */ }, 5000);
+}, 110000); // 1 minuto e 50 segundos
 </script>
 </body>
 </html>

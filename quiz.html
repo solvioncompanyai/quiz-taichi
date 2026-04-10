@@ -24,11 +24,6 @@
 
 <!-- QUIZ MAIN -->
 <main class="quiz-main" id="quiz-main">
-  <!-- Block indicator -->
-  <div class="block-indicator situacao" id="block-indicator">
-    <span>👤</span> Bloco 1 · Situação
-  </div>
-
   <!-- Question container -->
   <div id="question-container" style="width:100%;max-width:640px;margin-top:1.5rem;"></div>
 </main>
@@ -417,12 +412,6 @@ function updateHeader() {
   document.getElementById('q-counter').textContent = `Pergunta ${currentQ + 1} de ${TOTAL}`;
   document.getElementById('quiz-progress').style.width = pct + '%';
   document.getElementById('quiz-pct').textContent = pct + '%';
-
-  const bi = getBlockIndex(currentQ);
-  const indicator = document.getElementById('block-indicator');
-  indicator.textContent = '';
-  indicator.className = 'block-indicator ' + BLOCKS[bi].cls;
-  indicator.innerHTML = BLOCKS[bi].label;
 }
 
 // ─── RENDER QUESTION ─────────────────────────────────────────
@@ -579,7 +568,14 @@ function selectOption(btn, idx, q) {
   const nextBlock    = currentQ + 1 < TOTAL ? getBlockIndex(currentQ + 1) : -1;
 
   setTimeout(() => {
-    if(nextBlock !== -1 && nextBlock !== currentBlock && BLOCKS[currentBlock].unlock) {
+    // Special case: transition from block 1 (PROBLEMA) → block 2 (IMPLICAÇÃO)
+    // Show IMC calculator instead of generic unlock
+    if(nextBlock === 2 && currentBlock === 1) {
+      showIMCCalculator(() => {
+        currentQ++;
+        renderQuestion(currentQ);
+      });
+    } else if(nextBlock !== -1 && nextBlock !== currentBlock && BLOCKS[currentBlock].unlock) {
       showBlockUnlock(BLOCKS[currentBlock].unlock, () => {
         currentQ++;
         renderQuestion(currentQ);
@@ -609,7 +605,12 @@ function advanceQuestion() {
     const currentBlock = getBlockIndex(currentQ);
     const nextBlock    = getBlockIndex(currentQ + 1);
 
-    if(nextBlock !== currentBlock && BLOCKS[currentBlock].unlock) {
+    if(nextBlock === 2 && currentBlock === 1) {
+      showIMCCalculator(() => {
+        currentQ++;
+        renderQuestion(currentQ);
+      });
+    } else if(nextBlock !== currentBlock && BLOCKS[currentBlock].unlock) {
       showBlockUnlock(BLOCKS[currentBlock].unlock, () => {
         currentQ++;
         renderQuestion(currentQ);
@@ -644,6 +645,444 @@ function showBlockUnlock(unlock, callback) {
 
   // Auto-advance after 3s
   setTimeout(callback, 3000);
+}
+
+// ─── IMC CALCULATOR ───────────────────────────────────────────
+function showIMCCalculator(callback) {
+  const container = document.getElementById('question-container');
+  container.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.style.animation = 'slideInRight 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards';
+  wrap.innerHTML = `
+    <div class="imc-card card" id="imc-card">
+      <div class="imc-header">
+        <div class="imc-icon">⚖️</div>
+        <div class="imc-title">Uma informação importante<br>para o seu diagnóstico</div>
+        <div class="imc-subtitle">O IMC (Índice de Massa Corporal) influencia diretamente o nível de pressão nas suas articulações e a produção de cortisol. Precisamos desse dado para personalizar o seu protocolo.</div>
+      </div>
+
+      <div class="imc-inputs">
+        <div class="imc-field">
+          <label class="imc-label" for="imc-altura">📏 Sua altura</label>
+          <div class="imc-input-wrap">
+            <input type="number" id="imc-altura" class="imc-input" placeholder="Ex: 160" min="140" max="200">
+            <span class="imc-unit">cm</span>
+          </div>
+        </div>
+        <div class="imc-field">
+          <label class="imc-label" for="imc-peso">🏋️ Seu peso atual</label>
+          <div class="imc-input-wrap">
+            <input type="number" id="imc-peso" class="imc-input" placeholder="Ex: 72" min="40" max="180">
+            <span class="imc-unit">kg</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="imc-calc-btn" id="imc-calc-btn" onclick="calcularIMC()">
+        Calcular meu IMC →
+      </button>
+
+      <div class="imc-result" id="imc-result" style="display:none;">
+        <div class="imc-gauge-wrap">
+          <canvas id="imc-gauge" width="260" height="150"></canvas>
+          <div class="imc-value-display">
+            <div class="imc-value" id="imc-value-text">--</div>
+            <div class="imc-value-label" id="imc-value-label">IMC</div>
+          </div>
+        </div>
+
+        <div class="imc-category-badge" id="imc-category-badge"></div>
+        <div class="imc-insight" id="imc-insight"></div>
+
+        <div class="imc-scale">
+          <div class="imc-scale-row">
+            <span class="imc-scale-bar" style="background:#60a5fa;"></span>
+            <span class="imc-scale-text">Abaixo do peso &lt; 18,5</span>
+          </div>
+          <div class="imc-scale-row">
+            <span class="imc-scale-bar" style="background:#34d399;"></span>
+            <span class="imc-scale-text">Peso normal 18,5 – 24,9</span>
+          </div>
+          <div class="imc-scale-row">
+            <span class="imc-scale-bar" style="background:#fbbf24;"></span>
+            <span class="imc-scale-text">Sobrepeso 25 – 29,9</span>
+          </div>
+          <div class="imc-scale-row">
+            <span class="imc-scale-bar" style="background:#f97316;"></span>
+            <span class="imc-scale-text">Obesidade Grau 1 – 30 – 34,9</span>
+          </div>
+          <div class="imc-scale-row">
+            <span class="imc-scale-bar" style="background:#ef4444;"></span>
+            <span class="imc-scale-text">Obesidade Grau 2+ ≥ 35</span>
+          </div>
+        </div>
+
+        <button class="imc-continue-btn" id="imc-continue-btn">
+          Continuar o diagnóstico →
+        </button>
+      </div>
+    </div>
+  `;
+
+  // IMC card CSS (injected inline for portability)
+  const style = document.createElement('style');
+  style.textContent = `
+    .imc-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border-2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      width: 100%;
+    }
+    .imc-header { text-align: center; margin-bottom: var(--space-xl); }
+    .imc-icon { font-size: 2.5rem; margin-bottom: 0.75rem; animation: float 3s ease-in-out infinite; }
+    .imc-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg,#f59e0b,#fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .imc-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .imc-inputs { display: grid; gap: 1rem; margin-bottom: 1.25rem; }
+    .imc-field {}
+    .imc-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+    .imc-input-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid var(--color-border-2);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .imc-input-wrap:focus-within {
+      border-color: var(--color-amber);
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+    }
+    .imc-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 0.875rem 1rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      width: 100%;
+    }
+    .imc-input::placeholder { color: var(--text-muted); font-weight: 400; font-size: 1rem; }
+    .imc-unit {
+      padding: 0 1rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--color-amber);
+      background: rgba(245,158,11,0.08);
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      border-left: 1px solid var(--color-border);
+    }
+    .imc-calc-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg,#d97706,var(--color-amber),#fbbf24);
+      color: #1a1a1a;
+      font-weight: 800;
+      font-size: 1rem;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(245,158,11,0.35);
+      letter-spacing: 0.02em;
+    }
+    .imc-calc-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(245,158,11,0.55); }
+    .imc-calc-btn:active { transform: scale(0.97); }
+    .imc-result { margin-top: 1.5rem; animation: fadeInUp 0.5s ease; }
+    .imc-gauge-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .imc-value-display {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+    .imc-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .imc-value-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.08em; margin-top: 2px; }
+    .imc-category-badge {
+      text-align: center;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin: 0 auto 1rem;
+      display: inline-block;
+      width: 100%;
+    }
+    .imc-insight {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--color-border-2);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+    }
+    .imc-insight strong { color: var(--text-primary); }
+    .imc-scale {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .imc-scale-row { display: flex; align-items: center; gap: 0.6rem; }
+    .imc-scale-bar { width: 18px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .imc-scale-text { font-size: 0.72rem; color: var(--text-muted); }
+    .imc-continue-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg,#16a34a,var(--color-green),#059669);
+      color: white;
+      font-weight: 800;
+      font-size: 1rem;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--glow-green);
+      animation: pulse-cta 2.5s infinite;
+      letter-spacing: 0.02em;
+    }
+  `;
+  document.head.appendChild(style);
+
+  container.appendChild(wrap);
+
+  // Auto-focus first input
+  setTimeout(() => {
+    const altIn = document.getElementById('imc-altura');
+    if(altIn) altIn.focus();
+  }, 400);
+
+  // Continue button
+  document.addEventListener('click', function imcContinue(e) {
+    if(e.target && e.target.id === 'imc-continue-btn') {
+      document.removeEventListener('click', imcContinue);
+      callback();
+    }
+  });
+
+  // Enter key binding
+  document.addEventListener('keydown', function imcEnter(e) {
+    if(e.key === 'Enter') {
+      document.removeEventListener('keydown', imcEnter);
+      const resultDiv = document.getElementById('imc-result');
+      if(resultDiv && resultDiv.style.display !== 'none') {
+        callback();
+      } else {
+        calcularIMC();
+      }
+    }
+  });
+}
+
+function calcularIMC() {
+  const alturaInput = parseFloat(document.getElementById('imc-altura').value);
+  const pesoInput   = parseFloat(document.getElementById('imc-peso').value);
+
+  if(!alturaInput || !pesoInput || alturaInput < 100 || alturaInput > 250 || pesoInput < 30 || pesoInput > 250) {
+    // Shake inputs
+    document.querySelectorAll('.imc-input-wrap').forEach(el => {
+      el.style.animation = 'none';
+      el.style.borderColor = 'rgba(239,68,68,0.6)';
+      setTimeout(() => { el.style.borderColor = ''; }, 1500);
+    });
+    document.getElementById('imc-calc-btn').textContent = '⚠️ Preencha altura e peso corretamente';
+    setTimeout(() => { document.getElementById('imc-calc-btn').textContent = 'Calcular meu IMC →'; }, 2000);
+    return;
+  }
+
+  const alturaM = alturaInput / 100;
+  const imc = pesoInput / (alturaM * alturaM);
+  const imcRounded = Math.round(imc * 10) / 10;
+
+  // IMC categories
+  let categoria, cor, corHex, insight;
+  if(imc < 18.5) {
+    categoria = '🔵 Abaixo do peso';
+    cor = 'rgba(96,165,250,0.2)'; corHex = '#60a5fa';
+    insight = `Seu IMC de <strong>${imcRounded}</strong> indica que você está abaixo do peso ideal. Pessoas com peso mais baixo que o recomendado frequentemente têm <strong>menor densidade óssea e muscular</strong>, o que aumenta a pressão nas articulações sem o amortecimento adequado. O Protocolo Movimento da Esponja inclui micromovimentos que estimulam o fortalecimento do tecido conjuntivo mesmo sem impacto.`;
+  } else if(imc < 25) {
+    categoria = '🟢 Peso Normal';
+    cor = 'rgba(52,211,153,0.2)'; corHex = '#34d399';
+    insight = `Seu IMC de <strong>${imcRounded}</strong> está dentro do intervalo saudável — ótimo! Isso significa que o peso corporal <strong>não é o principal fator</strong> por trás das suas dores articulares. O seu diagnóstico aponta para o cortisol crônico como causa central. Com o protocolo correto, a reversão da rigidez tende a ser mais rápida para o seu perfil.`;
+  } else if(imc < 30) {
+    categoria = '🟡 Sobrepeso';
+    cor = 'rgba(251,191,36,0.2)'; corHex = '#fbbf24';
+    insight = `Seu IMC de <strong>${imcRounded}</strong> indica sobrepeso. Cada quilo extra multiplica por <strong>3 a 6 vezes a pressão sobre os joelhos</strong> durante atividades simples como subir escadas. Combinado com o cortisol elevado — que já está desidratando sua fáscia — isso explica a intensidade e frequência das suas dores. O Protocolo Movimento da Esponja foi desenhado especialmente para este perfil: lubrifica as articulações sem exigir impacto ou esforço.`;
+  } else if(imc < 35) {
+    categoria = '🟠 Obesidade Grau 1';
+    cor = 'rgba(249,115,22,0.2)'; corHex = '#f97316';
+    insight = `Seu IMC de <strong>${imcRounded}</strong> indica obesidade grau 1. Neste nível, a pressão constante sobre quadril, joelhos e coluna é <strong>4 a 8 vezes maior</strong> do que o recomendado. Isso acelera o desgaste da fáscia e da cartilagem. A boa notícia: o cortisol elevado que agrava a inflamação pode ser reduzido com os micromovimentos do protocolo — sem nenhum impacto, sem esforço intenso, sem risco de lesão.`;
+  } else {
+    categoria = '🔴 Obesidade Grau 2+';
+    cor = 'rgba(239,68,68,0.2)'; corHex = '#ef4444';
+    insight = `Seu IMC de <strong>${imcRounded}</strong> indica obesidade grau 2 ou superior. As suas articulações estão suportando uma carga que vai muito além do que foram projetadas para aguentar. Isso explica a intensidade das suas dores — e por que exercícios tradicionais geralmente pioram o quadro. O Protocolo Movimento da Esponja foi o método que mais transformou a vida de mulheres neste perfil, justamente porque <strong>não exige impacto nem esforço físico intenso</strong>.`;
+  }
+
+  // Save to sessionStorage
+  sessionStorage.setItem('imc_valor', imcRounded);
+  sessionStorage.setItem('imc_categoria', categoria);
+  sessionStorage.setItem('imc_cor', corHex);
+  sessionStorage.setItem('imc_peso', pesoInput);
+  sessionStorage.setItem('imc_altura', alturaInput);
+
+  // Show result
+  document.getElementById('imc-result').style.display = 'block';
+  document.getElementById('imc-calc-btn').style.display = 'none';
+  document.getElementById('imc-value-text').textContent = imcRounded;
+  document.getElementById('imc-value-label').textContent = 'IMC';
+
+  const badge = document.getElementById('imc-category-badge');
+  badge.textContent = categoria;
+  badge.style.background = cor;
+  badge.style.border = `1px solid ${corHex}40`;
+  badge.style.color = corHex;
+
+  document.getElementById('imc-insight').innerHTML = insight;
+
+  // Draw gauge canvas
+  drawIMCGauge(imcRounded, corHex);
+
+  // Scroll into view
+  document.getElementById('imc-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function drawIMCGauge(imc, activeColor) {
+  const canvas = document.getElementById('imc-gauge');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2, cy = H - 20;
+  const radius = 100;
+  const startAngle = Math.PI;
+  const endAngle   = 2 * Math.PI;
+
+  // Segments (IMC 10 → 40+)
+  // Each segment covers a range mapped to the semicircle
+  const segments = [
+    { max: 18.5, color: '#60a5fa' },
+    { max: 25,   color: '#34d399' },
+    { max: 30,   color: '#fbbf24' },
+    { max: 35,   color: '#f97316' },
+    { max: 42,   color: '#ef4444' }
+  ];
+
+  const IMC_MIN = 10, IMC_MAX = 42;
+  let prevAngle = startAngle;
+
+  // Draw track
+  segments.forEach(seg => {
+    const segEnd = startAngle + ((seg.max - IMC_MIN) / (IMC_MAX - IMC_MIN)) * Math.PI;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, prevAngle, segEnd);
+    ctx.strokeStyle = seg.color;
+    ctx.lineWidth = 18;
+    ctx.lineCap = 'butt';
+    ctx.globalAlpha = 0.2;
+    ctx.stroke();
+    prevAngle = segEnd;
+  });
+
+  // Draw filled arc up to the user's IMC
+  const clampedIMC = Math.max(IMC_MIN, Math.min(imc, IMC_MAX));
+  const fillAngle = startAngle + ((clampedIMC - IMC_MIN) / (IMC_MAX - IMC_MIN)) * Math.PI;
+  prevAngle = startAngle;
+  ctx.globalAlpha = 1;
+
+  segments.forEach(seg => {
+    const segEnd = startAngle + ((seg.max - IMC_MIN) / (IMC_MAX - IMC_MIN)) * Math.PI;
+    if(prevAngle >= fillAngle) return;
+    const drawEnd = Math.min(segEnd, fillAngle);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, prevAngle, drawEnd);
+    ctx.strokeStyle = seg.color;
+    ctx.lineWidth = 18;
+    ctx.lineCap = 'butt';
+    ctx.globalAlpha = 1;
+    ctx.stroke();
+    prevAngle = segEnd;
+  });
+
+  // Needle
+  ctx.globalAlpha = 1;
+  const needleAngle = startAngle + ((clampedIMC - IMC_MIN) / (IMC_MAX - IMC_MIN)) * Math.PI;
+  const needleLen = radius - 10;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(
+    cx + needleLen * Math.cos(needleAngle),
+    cy + needleLen * Math.sin(needleAngle)
+  );
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, 8, 0, 2 * Math.PI);
+  ctx.fillStyle = activeColor;
+  ctx.fill();
+  ctx.strokeStyle = '#080e1a';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // IMC min/max labels
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('10', cx - radius - 8, cy + 4);
+  ctx.textAlign = 'right';
+  ctx.fillText('42+', cx + radius + 8, cy + 4);
+  ctx.textAlign = 'center';
+  ctx.fillText('NORMAL', cx, cy - radius - 8);
+  ctx.globalAlpha = 1;
 }
 
 // ─── FINISH ───────────────────────────────────────────────────

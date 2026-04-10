@@ -351,6 +351,10 @@
     <div class="profile-label">🔬 Seu Perfil de Ferrugem Articular</div>
     <div class="profile-name gradient-text" id="profile-name">Carregando...</div>
     <div class="profile-desc" id="profile-desc">Analisando suas respostas...</div>
+
+    <!-- IMC inline badge (populated by JS) -->
+    <div id="imc-profile-badge" style="display:none;margin-top:1rem;"></div>
+
     <div class="ferrugem-meter">
       <div class="ferrugem-label">
         <span>Nível de Ferrugem</span>
@@ -429,7 +433,7 @@
       </div>
 
       <!-- Stats -->
-      <div class="analysis-stats">
+      <div class="analysis-stats" style="grid-template-columns:1fr 1fr 1fr 1fr;">
         <div class="stat-item">
           <div class="stat-value gradient-text" id="stat-score">—</div>
           <div class="stat-label">Pontuação de Ferrugem</div>
@@ -437,6 +441,10 @@
         <div class="stat-item">
           <div class="stat-value gradient-text-green">27</div>
           <div class="stat-label">Pontos Analisados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--color-amber);" id="stat-imc">—</div>
+          <div class="stat-label">Seu IMC</div>
         </div>
         <div class="stat-item">
           <div class="stat-value" style="color:var(--color-amber);" id="stat-profile">—</div>
@@ -516,16 +524,67 @@ const profiles = [
 
 const profile = profiles.find(p => score >= p.min && score <= p.max) || profiles[2];
 
+// ─── IMC DATA ─────────────────────────────────────────────────
+const imcValor     = parseFloat(sessionStorage.getItem('imc_valor'))   || null;
+const imcCategoria = sessionStorage.getItem('imc_categoria') || null;
+const imcCor       = sessionStorage.getItem('imc_cor')       || null;
+
+// Extra copy about IMC's impact on joints
+function getIMCJointCopy(imc, cat) {
+  if(!imc) return '';
+  if(imc < 18.5) return ` Aliado ao seu IMC de <strong>${imc}</strong> (abaixo do peso ideal), isso reduz a densidade que protege suas articulações — tornando-as ainda mais vulneráveis ao cortisol.`;
+  if(imc < 25)   return ` Seu IMC de <strong>${imc}</strong> está saudável — o que confirma que o peso <em>não é o culpado</em>. O seu problema é puramente bioquímico: cortisol destruindo a fáscia.`;
+  if(imc < 30)   return ` Com IMC de <strong>${imc}</strong> (sobrepeso), cada passo adiciona até <strong>6× mais pressão</strong> nos seus joelhos — combinando com o cortisol para criar uma tempestade perfeita de dor.`;
+  if(imc < 35)   return ` Seu IMC de <strong>${imc}</strong> (obesidade grau 1) explica por que a dor é tão constante: as suas articulações suportam uma carga muito acima do projetado, agravada pelo cortisol crônico.`;
+  return ` Com IMC de <strong>${imc}</strong>, as suas articulações carregam uma pressão que nenhum medicamento consegue compensar a longo prazo — o Protocolo age diretamente na raiz do problema.`;
+}
+
 // Populate profile card
 setTimeout(() => {
   document.getElementById('profile-name').textContent = profile.name;
-  document.getElementById('profile-desc').textContent = profile.desc;
+
+  // Enrich desc with IMC copy
+  const imcCopy = getIMCJointCopy(imcValor, imcCategoria);
+  document.getElementById('profile-desc').innerHTML = profile.desc + (imcCopy ? '<br><br>' + imcCopy : '');
+
   document.getElementById('ferrugem-pct').textContent = profile.pct + '%';
   const fill = document.getElementById('ferrugem-fill');
   fill.style.background = `linear-gradient(90deg, ${profile.color}, ${profile.pct > 60 ? '#ef4444' : '#f59e0b'})`;
   setTimeout(() => { fill.style.width = profile.pct + '%'; }, 100);
   document.getElementById('stat-score').textContent = score;
   document.getElementById('stat-profile').textContent = profile.grade;
+
+  // IMC stat
+  const imcStatEl = document.getElementById('stat-imc');
+  if(imcValor && imcStatEl) {
+    imcStatEl.textContent = imcValor;
+    imcStatEl.style.color = imcCor || 'var(--color-amber)';
+  } else if(imcStatEl) {
+    imcStatEl.textContent = 'N/A';
+  }
+
+  // IMC badge below profile text
+  if(imcValor && imcCategoria) {
+    const badgeEl = document.getElementById('imc-profile-badge');
+    badgeEl.style.display = 'flex';
+    badgeEl.style.alignItems = 'center';
+    badgeEl.style.gap = '0.75rem';
+    badgeEl.style.flexWrap = 'wrap';
+    badgeEl.innerHTML = `
+      <div style="
+        display:inline-flex;align-items:center;gap:0.4rem;
+        background:${imcCor}22;border:1px solid ${imcCor}44;
+        border-radius:9999px;padding:0.35rem 0.9rem;
+        font-size:0.78rem;font-weight:700;color:${imcCor};
+      ">⚖️ IMC: ${imcValor}</div>
+      <div style="
+        display:inline-flex;align-items:center;gap:0.4rem;
+        background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+        border-radius:9999px;padding:0.35rem 0.9rem;
+        font-size:0.78rem;font-weight:600;color:var(--text-muted);
+      ">${imcCategoria}</div>
+    `;
+  }
 }, 800);
 
 // ─── ANALYSIS STEPS ANIMATION ────────────────────────────────

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Diagnóstico Gratuito de Ferrugem Articular — Protocolo Movimento da Esponja</title>
+  <meta name="description" content="Descubra em 2 minutos o nível de ferrugem nas suas articulações e receba o protocolo de destravamento personalizado para o seu grau exato de dor.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+<!-- Particles Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Hero Background -->
+<div class="hero-bg"></div>
+
+<!-- URGENCY BAR -->
+<div class="urgency-bar">
+  ⚠️ &nbsp;Este diagnóstico é rastreado por IP — pode ser realizado <strong>apenas uma vez por pessoa</strong>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+  <div class="hook-content">
+    <div class="container" style="display:flex;flex-direction:column;align-items:center;gap:0;">
+
+      <!-- Badge -->
+      <div class="badge badge-amber animate-fade-in-down" style="margin-bottom:1.5rem;">
+        🔬 Diagnóstico Gratuito e Personalizado
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="hook-headline animate-fade-in-up delay-100">
+        Descubra em <span class="gradient-text">2 Minutos</span> o Nível de <em>"Ferrugem"</em> nas Suas Articulações —<br>
+        <span style="font-size:0.85em;opacity:0.9;">e Receba o Protocolo de Destravamento de <span class="gradient-text-green">15 Minutos</span> Feito para o Seu Grau Exato de Dor</span>
+      </h1>
+
+      <!-- Sub headline -->
+      <p class="hook-subheadline animate-fade-in-up delay-200">
+        Este diagnóstico gratuito foi desenvolvido para <strong>mulheres acima dos 45 anos</strong> que acordam com o corpo travado, não conseguem dormir direito e já tentaram de tudo — sem resultado duradouro.
+      </p>
+
+      <!-- Progress Bar -->
+      <div class="progress-section animate-fade-in-up delay-300">
+        <div class="progress-label">
+          <span>Diagnóstico</span>
+          <span>0% Concluído</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width:0%" id="entry-progress"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:0.4rem;font-size:0.7rem;color:var(--text-muted);">
+          <span>Início</span>
+          <span>Resultado Personalizado</span>
+        </div>
+      </div>
+
+      <!-- CTA Button -->
+      <div class="cta-section animate-fade-in-up delay-400">
+        <div style="position:relative;width:100%;max-width:500px;">
+          <!-- Rings -->
+          <div style="position:absolute;inset:-8px;border-radius:9999px;border:2px solid rgba(16,185,129,0.3);animation:pulse-ring 2s ease-out infinite;pointer-events:none;"></div>
+          <div style="position:absolute;inset:-16px;border-radius:9999px;border:1px solid rgba(16,185,129,0.15);animation:pulse-ring 2s ease-out infinite 0.5s;pointer-events:none;"></div>
+          <a href="quiz.html" class="btn btn-cta" id="start-btn">
+            → INICIAR MEU DIAGNÓSTICO GRATUITO AGORA
+          </a>
+        </div>
+        <div class="cta-meta">
+          <span>⏱</span>
+          <span>Leva menos de <strong>2 minutos</strong></span>
+          <span>|</span>
+          <span>✅ Resultado imediato e personalizado</span>
+        </div>
+      </div>
+
+      <!-- Fascinations -->
+      <div class="fascinations-card animate-fade-in-up delay-500">
+        <div class="fascinations-title">
+          <span>🔍</span>
+          Ao final deste diagnóstico, você vai descobrir:
+        </div>
+        <div class="fascination-item">
+          <div class="fascination-bullet">🎯</div>
+          <div class="fascination-text">
+            <strong>Por que a sua dor não é culpa da sua idade, do seu peso ou da sua genética</strong> — e qual é o verdadeiro vilão biológico que está destruindo as suas articulações por dentro
+          </div>
+        </div>
+        <div class="fascination-item">
+          <div class="fascination-bullet">💊</div>
+          <div class="fascination-text">
+            O motivo pelo qual o <strong>Torsilax, o Dorflex e até o Zolpidem</strong> continuam falhando com você — e o que isso revela sobre o estado atual do seu sistema nervoso
+          </div>
+        </div>
+        <div class="fascination-item">
+          <div class="fascination-bullet">⚠️</div>
+          <div class="fascination-text">
+            Se o seu corpo já está no <strong>Nível Crítico de Intoxicação por Cortisol</strong> — ou se ainda há tempo de reverter o processo antes que o dano vire permanente
+          </div>
+        </div>
+        <div class="fascination-item">
+          <div class="fascination-bullet">📋</div>
+          <div class="fascination-text">
+            Qual dos <strong>3 Perfis de Ferrugem Articular</strong> é o seu — e qual protocolo exato de 15 minutos corresponde ao seu grau de dor
+          </div>
+        </div>
+        <div class="fascination-item">
+          <div class="fascination-bullet">✨</div>
+          <div class="fascination-text">
+            Por que mulheres com <strong>artrose grau 3, bico de papagaio e hérnia</strong> estão conseguindo se destravar com movimentos que parecem ridiculamente simples
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonials -->
+      <div class="testimonials-section animate-fade-in-up delay-600">
+        <div class="testimonials-title">✅ O que dizem quem já fez o diagnóstico</div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            "Eu achei que era perda de tempo responder um questionário. Mas quando li o meu resultado, chorei. Pela primeira vez alguém descreveu exatamente o que eu sinto todo dia. E em 4 dias fazendo os 15 minutinhos, dormi a noite toda sem acordar."
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">R</div>
+            <div>
+              <div class="testimonial-name">Rosângela M.</div>
+              <div class="testimonial-location">57 anos · Belo Horizonte</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            "Fiz o teste esperando mais uma coisa que não ia funcionar. O resultado me mostrou que minha dor na lombar era nível 2 de ferrugem fascial. Segui o protocolo indicado e na segunda semana consegui me abaixar para pegar meu neto no colo sem sentir aquela fisgada. Só quem tem essa dor sabe o que isso significa."
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">C</div>
+            <div>
+              <div class="testimonial-name">Conceição R.</div>
+              <div class="testimonial-location">61 anos · Interior de SP</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            "Passei 3 anos gastando quase R$ 400 por mês em farmácia. Fiz o diagnóstico por curiosidade. Em 12 dias, reduzi os remédios pela metade. O médico me perguntou o que eu tinha feito diferente."
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">M</div>
+            <div>
+              <div class="testimonial-name">Marlene F.</div>
+              <div class="testimonial-location">53 anos · Goiânia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second CTA -->
+      <div class="cta-section animate-fade-in-up delay-700">
+        <a href="quiz.html" class="btn btn-cta">
+          → INICIAR MEU DIAGNÓSTICO GRATUITO AGORA
+        </a>
+        <div class="cta-meta">
+          <span>⏱</span>
+          <span>Leva menos de <strong>2 minutos</strong></span>
+          <span>|</span>
+          <span>✅ Resultado imediato e personalizado</span>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="hook-disclaimer animate-fade-in-up delay-800" style="margin-top:2rem;">
+        ⚠️ Este diagnóstico é rastreado por IP e pode ser realizado apenas uma vez por pessoa.
+        Após a conclusão, o seu protocolo personalizado fica disponível por apenas <strong>24 horas</strong>.
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+// Particles
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function createParticle() {
+  return {
+    x: Math.random() * canvas.width,
+    y: canvas.height + 10,
+    size: Math.random() * 3 + 1,
+    speed: Math.random() * 0.6 + 0.2,
+    opacity: Math.random() * 0.5 + 0.1,
+    hue: Math.random() > 0.5 ? 200 : 150
+  };
+}
+
+for(let i = 0; i < 40; i++) {
+  const p = createParticle();
+  p.y = Math.random() * canvas.height;
+  particles.push(p);
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, i) => {
+    p.y -= p.speed;
+    p.x += Math.sin(Date.now() * 0.001 + i) * 0.3;
+    if(p.y < -10) { particles[i] = createParticle(); }
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${p.opacity})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// Animate progress bar on load
+setTimeout(() => {
+  document.getElementById('entry-progress').style.width = '8%';
+}, 800);
+
+// Ripple effect on buttons
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const circle = document.createElement('span');
+    circle.className = 'ripple-circle';
+    const size = Math.max(rect.width, rect.height);
+    circle.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px;`;
+    this.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+  });
+});
+
+// Scroll reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('revealed'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.js-reveal').forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>

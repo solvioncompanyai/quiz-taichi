@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Diagnóstico — Protocolo Movimento da Esponja</title>
+  <meta name="description" content="Responda as perguntas do diagnóstico personalizado e descubra o seu nível de ferrugem articular.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/quiz.css">
+</head>
+<body class="quiz-page">
+
+<!-- QUIZ HEADER -->
+<header class="quiz-header">
+  <div class="quiz-header-inner">
+    <span class="question-counter" id="q-counter">Pergunta 1 de 27</span>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="quiz-progress" style="width:0%"></div>
+    </div>
+    <span class="progress-pct" id="quiz-pct">0%</span>
+  </div>
+</header>
+
+<!-- QUIZ MAIN -->
+<main class="quiz-main" id="quiz-main">
+  <!-- Block indicator -->
+  <div class="block-indicator situacao" id="block-indicator">
+    <span>👤</span> Bloco 1 · Situação
+  </div>
+
+  <!-- Question container -->
+  <div id="question-container" style="width:100%;max-width:640px;margin-top:1.5rem;"></div>
+</main>
+
+<script>
+// ─── QUIZ DATA ────────────────────────────────────────────────
+const BLOCKS = [
+  {
+    id: 'situacao',
+    label: '👤 Bloco 1 · Situação',
+    cls: 'situacao',
+    unlock: { icon: '💙', title: 'Situação mapeada!', text: 'Agora vamos entender melhor sua dor.' }
+  },
+  {
+    id: 'problema',
+    label: '🔥 Bloco 2 · Problema',
+    cls: 'problema',
+    unlock: { icon: '🔥', title: 'Padrão identificado!', text: 'Analisando o impacto na sua vida...' }
+  },
+  {
+    id: 'implicacao',
+    label: '💔 Bloco 3 · Implicação',
+    cls: 'implicacao',
+    unlock: { icon: '💔', title: 'Impacto calculado!', text: 'Calculando a solução ideal...' }
+  },
+  {
+    id: 'solucao',
+    label: '🌱 Bloco 4 · Solução',
+    cls: 'solucao',
+    unlock: { icon: '🌱', title: 'Perfil quase completo!', text: 'Última etapa — quebrando objeções...' }
+  },
+  {
+    id: 'objecao',
+    label: '🛡️ Bloco 5 · Validação',
+    cls: 'objecao',
+    unlock: null
+  }
+];
+
+const QUESTIONS = [
+  // BLOCO 1 — SITUAÇÃO
+  {
+    block: 0,
+    text: 'Para personalizarmos o seu protocolo, precisamos saber: qual é a sua faixa de idade?',
+    multi: false,
+    options: [
+      { text: '45 a 49 anos', icon: '🌸', score: 1 },
+      { text: '50 a 54 anos', icon: '🌺', score: 2 },
+      { text: '55 a 59 anos', icon: '🍂', score: 3 },
+      { text: '60 a 65 anos', icon: '🍁', score: 4 },
+      { text: 'Acima de 65 anos', icon: '🌟', score: 5 }
+    ]
+  },
+  {
+    block: 0,
+    text: 'Como você descreveria o papel que você ocupa na sua família hoje?',
+    multi: false,
+    options: [
+      { text: 'Sou a principal responsável pela casa e pelos outros', icon: '🏠', score: 4 },
+      { text: 'Cuido de filhos, netos ou marido além de trabalhar fora', icon: '💪', score: 5 },
+      { text: 'Já criei meus filhos, mas ainda sou a referência de todos', icon: '👑', score: 3 },
+      { text: 'Vivo sozinha, mas carrego muita coisa nas costas emocionalmente', icon: '💙', score: 4 }
+    ]
+  },
+  {
+    block: 0,
+    text: 'Nos últimos 6 meses, com que frequência você sente dor física no corpo?',
+    multi: false,
+    options: [
+      { text: 'Todo dia, sem exceção', icon: '😣', score: 5 },
+      { text: 'Quase todo dia — melhora um pouco com remédio', icon: '😔', score: 4 },
+      { text: 'Algumas vezes por semana', icon: '😕', score: 3 },
+      { text: 'Raramente, mas quando vem é muito forte', icon: '⚡', score: 2 }
+    ]
+  },
+  // BLOCO 2 — PROBLEMA
+  {
+    block: 1,
+    text: 'Quando você acorda de manhã, como estão as suas articulações nos primeiros minutos em pé?',
+    multi: false,
+    options: [
+      { text: 'Travadas e doloridas — preciso de alguns minutos para conseguir andar direito', icon: '🔒', score: 5 },
+      { text: 'Rígidas, mas passam em meia hora', icon: '⏰', score: 4 },
+      { text: 'Sinto dor, mas consigo me mexer logo', icon: '😬', score: 3 },
+      { text: 'Estão bem de manhã, mas pioram ao longo do dia', icon: '📉', score: 2 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'Marque todas as regiões do corpo onde você sente dor ou desconforto com frequência:',
+    subtitle: 'Pode selecionar mais de uma opção',
+    multi: true,
+    options: [
+      { text: 'Lombar (parte baixa das costas)', icon: '🔴', score: 2 },
+      { text: 'Joelhos', icon: '🔴', score: 2 },
+      { text: 'Pescoço e trapézio (ombros)', icon: '🔴', score: 2 },
+      { text: 'Quadril', icon: '🔴', score: 2 },
+      { text: 'Calcanhar / planta do pé', icon: '🔴', score: 2 },
+      { text: 'Mãos e dedos', icon: '🔴', score: 2 },
+      { text: 'Toda a coluna', icon: '🔴', score: 4 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'Algum médico já te disse algo parecido com: "Na sua idade é normal sentir isso"?',
+    multi: false,
+    options: [
+      { text: 'Sim, ouvi isso mais de uma vez', icon: '😤', score: 5 },
+      { text: 'Sim, uma vez — e não gostei nada', icon: '😒', score: 4 },
+      { text: 'Não, mas eu mesma já pensei que é da idade', icon: '🤔', score: 3 },
+      { text: 'Não, os médicos que consultei foram mais cuidadosos', icon: '👍', score: 1 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'Você já tentou alguma dessas soluções para a dor e a insônia? Marque todas que já experimentou:',
+    subtitle: 'Pode selecionar mais de uma opção',
+    multi: true,
+    options: [
+      { text: 'Remédios para dormir (Zolpidem, Rivotril ou similares)', icon: '💊', score: 3 },
+      { text: 'Relaxantes musculares (Torsilax, Dorflex)', icon: '💊', score: 3 },
+      { text: 'Anti-inflamatórios com receita', icon: '💊', score: 3 },
+      { text: 'Fisioterapia', icon: '🏥', score: 2 },
+      { text: 'Yoga ou alongamento no YouTube', icon: '🧘', score: 2 },
+      { text: 'Meditação ou mindfulness', icon: '🧠', score: 2 },
+      { text: 'Academia ou musculação', icon: '🏋️', score: 1 },
+      { text: 'Pilates ou Hidroginástica', icon: '💧', score: 1 },
+      { text: 'Nenhuma das anteriores', icon: '❌', score: 0 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'Sobre as soluções que você tentou: qual foi o resultado honesto?',
+    multi: false,
+    options: [
+      { text: 'Aliviaram um pouco, mas a dor sempre voltou', icon: '↩️', score: 4 },
+      { text: 'Funcionaram no começo e pararam de fazer efeito', icon: '📉', score: 5 },
+      { text: 'Não funcionaram nada', icon: '❌', score: 5 },
+      { text: 'Machucaram mais do que ajudaram', icon: '😣', score: 5 },
+      { text: 'Ainda não tentei nada de verdade', icon: '🤷', score: 2 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'Como está o seu sono atualmente?',
+    multi: false,
+    options: [
+      { text: 'Péssimo — acordo de madrugada quase todo dia e fico rolando na cama', icon: '😴', score: 5 },
+      { text: 'Ruim — demoro para pegar no sono e acordo cansada', icon: '😪', score: 4 },
+      { text: 'Irregular — às vezes durmo, às vezes não', icon: '〰️', score: 3 },
+      { text: 'Razoável — durmo, mas não me sinto descansada de manhã', icon: '😕', score: 2 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'O que passa pela sua cabeça quando você está deitada na cama sem conseguir dormir?',
+    subtitle: 'Pode selecionar mais de uma opção',
+    multi: true,
+    options: [
+      { text: 'Contas, dívidas e dinheiro', icon: '💰', score: 2 },
+      { text: 'Saúde — minha ou de alguém da família', icon: '❤️', score: 2 },
+      { text: 'Brigas, mágoas ou situações não resolvidas', icon: '💔', score: 2 },
+      { text: 'O futuro — o que vai ser de mim daqui alguns anos', icon: '🔮', score: 2 },
+      { text: 'Nada específico, mas o coração fica acelerado sem motivo', icon: '💓', score: 3 },
+      { text: 'Pensamentos catastrofistas que eu não consigo parar', icon: '🌪️', score: 3 }
+    ]
+  },
+  {
+    block: 1,
+    text: 'Quanto você gasta por mês, em média, com remédios para dor, sono ou relaxamento muscular?',
+    multi: false,
+    options: [
+      { text: 'Menos de R$ 100', icon: '💵', score: 1 },
+      { text: 'Entre R$ 100 e R$ 200', icon: '💵', score: 2 },
+      { text: 'Entre R$ 200 e R$ 400', icon: '💸', score: 3 },
+      { text: 'Acima de R$ 400', icon: '💸', score: 4 },
+      { text: 'Não gasto com isso, mas sofro sem remédio', icon: '😰', score: 3 }
+    ]
+  },
+  // BLOCO 3 — IMPLICAÇÃO
+  {
+    block: 2,
+    text: 'Já aconteceu de você evitar fazer algo que ama — brincar com neto, ir a um passeio, dançar — por causa da dor ou do medo de não aguentar?',
+    multi: false,
+    options: [
+      { text: 'Sim, isso acontece com frequência e me entristece muito', icon: '😢', score: 5 },
+      { text: 'Sim, algumas vezes — e odeio me sentir assim', icon: '😞', score: 4 },
+      { text: 'Raramente, mas quando acontece fico frustrada', icon: '😤', score: 3 },
+      { text: 'Não, ainda consigo fazer tudo que quero', icon: '😊', score: 1 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'Como você se sente quando percebe que o seu corpo não consegue mais fazer coisas que você fazia facilmente antes?',
+    multi: false,
+    options: [
+      { text: 'Envergonhada e frustrada com meu próprio corpo', icon: '😳', score: 5 },
+      { text: 'Triste — sinto que envelheci rápido demais', icon: '😭', score: 4 },
+      { text: 'Furiosa, porque sei que poderia ser diferente', icon: '😡', score: 4 },
+      { text: 'Resignada — acho que é o destino mesmo', icon: '😶', score: 3 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'Você já precisou esconder a dor ou fingir que estava bem para não preocupar sua família ou não "estragar o clima"?',
+    multi: false,
+    options: [
+      { text: 'Sim, faço isso com frequência', icon: '🎭', score: 5 },
+      { text: 'Sim, às vezes — engulo o choro para não dar trabalho', icon: '😶', score: 4 },
+      { text: 'Raramente', icon: '🙅', score: 2 },
+      { text: 'Não costumo esconder o que sinto', icon: '😊', score: 1 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'Sobre os remédios que você toma: o que te preocupa mais?',
+    multi: false,
+    options: [
+      { text: 'Que o meu estômago e o meu fígado estejam sendo destruídos por dentro', icon: '⚠️', score: 4 },
+      { text: 'Que eu esteja ficando dependente e que pare de funcionar', icon: '🔗', score: 4 },
+      { text: 'Que esteja gastando dinheiro que faz falta para outras coisas', icon: '💸', score: 3 },
+      { text: 'Que não esteja resolvendo o problema de verdade, só mascarando', icon: '🎭', score: 4 },
+      { text: 'Tudo isso ao mesmo tempo', icon: '😰', score: 5 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'Você já pensou, em algum momento, em como seria a sua vida daqui a 10 anos se a sua dor e o seu cansaço continuarem no mesmo ritmo?',
+    multi: false,
+    options: [
+      { text: 'Sim, e o pensamento me apavora — não quero depender de ninguém', icon: '😨', score: 5 },
+      { text: 'Sim, penso nisso com frequência e me gera muita angústia', icon: '😟', score: 4 },
+      { text: 'Às vezes — tento não pensar muito nisso', icon: '🙈', score: 3 },
+      { text: 'Não costumo pensar nisso', icon: '🤷', score: 1 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'O medo de "dar trabalho para os filhos" ou de "virar um peso para a família" no futuro é algo que passa pela sua cabeça?',
+    multi: false,
+    options: [
+      { text: 'Sim, é o meu maior medo na vida', icon: '😢', score: 5 },
+      { text: 'Sim, com certa frequência', icon: '😔', score: 4 },
+      { text: 'Às vezes', icon: '🤔', score: 3 },
+      { text: 'Raramente penso nisso', icon: '😊', score: 1 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'Quando você imagina uma manhã onde você acorda, coloca o pé no chão e não sente nenhuma dor — o corpo leve, a mente descansada — o quanto isso parece distante da sua realidade hoje?',
+    multi: false,
+    options: [
+      { text: 'Parece impossível. Faz tanto tempo que não me sinto assim que esqueci como é.', icon: '😔', score: 5 },
+      { text: 'Parece muito distante — quase um sonho', icon: '💭', score: 4 },
+      { text: 'Parece difícil, mas ainda acredito que pode mudar', icon: '🌱', score: 3 },
+      { text: 'Está próximo — tenho dias bons, mas quero que seja consistente', icon: '✨', score: 2 }
+    ]
+  },
+  {
+    block: 2,
+    text: 'Você sente que cuida de todos ao redor, mas raramente alguém realmente olha para a sua dor com atenção e cuidado?',
+    multi: false,
+    options: [
+      { text: 'Sim, completamente. Me sinto invisível nesse sentido.', icon: '💔', score: 5 },
+      { text: 'Sim, na maioria das vezes', icon: '😞', score: 4 },
+      { text: 'Às vezes — alguns percebem, mas não sabem o que fazer', icon: '🤷', score: 3 },
+      { text: 'Não, tenho apoio das pessoas que amo', icon: '💛', score: 1 }
+    ]
+  },
+  // BLOCO 4 — SOLUÇÃO
+  {
+    block: 3,
+    text: 'Se existisse uma forma de reduzir a sua dor articular e melhorar o seu sono em apenas 15 minutos por dia, sem sair de casa, sem suar e sem risco de se machucar — o quanto você estaria disposta a tentar?',
+    multi: false,
+    options: [
+      { text: 'Faria agora mesmo, sem pensar duas vezes', icon: '🚀', score: 5 },
+      { text: 'Tentaria com certeza — precisava de algo assim', icon: '✅', score: 4 },
+      { text: 'Tentaria, mas com um pé atrás', icon: '🤔', score: 3 },
+      { text: 'Dependeria do que é exatamente', icon: '❓', score: 2 }
+    ]
+  },
+  {
+    block: 3,
+    text: 'O que te impediria de começar um hábito de cuidado pessoal de 15 minutos diários?',
+    multi: false,
+    options: [
+      { text: 'Não tenho nem 15 minutos livres no meu dia', icon: '⏰', score: 3 },
+      { text: 'Tenho medo de fazer errado e machucar minha coluna ou joelhos', icon: '🦴', score: 3 },
+      { text: 'Já tentei muita coisa e não acredito mais que algo vai funcionar', icon: '😒', score: 4 },
+      { text: 'Sentiria culpa de gastar esse tempo comigo mesma', icon: '😔', score: 4 },
+      { text: 'Nada me impediria — só preciso saber o que fazer', icon: '💪', score: 1 }
+    ]
+  },
+  {
+    block: 3,
+    text: 'Você sabia que a principal causa da rigidez articular em mulheres acima dos 45 anos não é o desgaste dos ossos, mas sim a desidratação da fáscia — causada pelo excesso de cortisol (o hormônio do estresse crônico)?',
+    multi: false,
+    options: [
+      { text: 'Não sabia disso e faz total sentido com o que sinto', icon: '💡', score: 5 },
+      { text: 'Já ouvi falar vagamente, mas nunca entendi direito', icon: '🤔', score: 4 },
+      { text: 'Não acredito muito nisso — acho que é só desgaste mesmo', icon: '🤨', score: 2 },
+      { text: 'Sim, já li sobre isso', icon: '📚', score: 3 }
+    ]
+  },
+  {
+    block: 3,
+    text: 'Se o seu corpo pudesse produzir o seu próprio "lubrificante natural" de volta — eliminando a queimação nas juntas e desligando a sua mente antes de dormir — sem remédios e sem academia, isso seria algo que você gostaria de aprender a ativar?',
+    multi: false,
+    options: [
+      { text: 'Sim, absolutamente — é exatamente isso que eu preciso', icon: '🎯', score: 5 },
+      { text: 'Sim, com certeza — mas quero entender melhor como funciona', icon: '✅', score: 4 },
+      { text: 'Provavelmente sim', icon: '🙂', score: 3 },
+      { text: 'Tenho minhas dúvidas, mas estou curiosa', icon: '🤔', score: 2 }
+    ]
+  },
+  {
+    block: 3,
+    text: 'Uma última pergunta importante: qual seria a maior transformação na sua vida se você conseguisse acordar sem dor e dormir a noite toda, de forma consistente?',
+    multi: false,
+    options: [
+      { text: 'Teria energia para brincar e estar presente com meus netos', icon: '👶', score: 3 },
+      { text: 'Pararia de gastar dinheiro em farmácia e usaria esse dinheiro comigo mesma', icon: '💚', score: 3 },
+      { text: 'Voltaria a fazer as coisas que amo sem medo e sem dor', icon: '🌟', score: 3 },
+      { text: 'Sentiria que recuperei o controle do meu próprio corpo', icon: '💪', score: 3 },
+      { text: 'Sentiria que minha vida voltou a ser minha', icon: '🦋', score: 3 },
+      { text: 'Todas essas coisas', icon: '✨', score: 5 }
+    ]
+  },
+  // BLOCO 5 — OBJEÇÕES
+  {
+    block: 4,
+    text: 'Você tem algum diagnóstico médico como artrose, hérnia de disco, bico de papagaio ou osteoporose?',
+    multi: false,
+    options: [
+      { text: 'Sim, tenho diagnóstico confirmado por médico ou exame', icon: '📋', score: 4 },
+      { text: 'Suspeito que tenha, mas nunca fiz exame', icon: '🤔', score: 3 },
+      { text: 'Não tenho diagnóstico, só dor crônica', icon: '😔', score: 3 },
+      { text: 'Não sei ao certo', icon: '❓', score: 2 }
+    ]
+  },
+  {
+    block: 4,
+    text: 'Mesmo que o seu caso seja considerado "grave" pelos médicos, você concorda que merece pelo menos tentar uma alternativa que não tem risco de lesão, não exige esforço físico intenso e custa menos do que uma caixa de anti-inflamatório?',
+    multi: false,
+    options: [
+      { text: 'Sim, concordo — já não tenho nada a perder tentando', icon: '✅', score: 5 },
+      { text: 'Concordo, mas com cautela', icon: '🤔', score: 4 },
+      { text: 'Concordo parcialmente', icon: '😕', score: 3 },
+      { text: 'Ainda estou em dúvida', icon: '❓', score: 2 }
+    ]
+  },
+  {
+    block: 4,
+    text: 'Por último: em uma escala de urgência, o quanto você quer resolver a sua dor e o seu problema de sono?',
+    multi: false,
+    options: [
+      { text: 'É urgente — estou no meu limite', icon: '🚨', score: 5 },
+      { text: 'É muito importante — preciso mudar isso em breve', icon: '⚡', score: 4 },
+      { text: 'É importante, mas não me sinto em pânico ainda', icon: '📝', score: 3 },
+      { text: 'Estou explorando opções por agora', icon: '🔍', score: 2 }
+    ]
+  }
+];
+
+// Block boundaries [first question index in block]
+const BLOCK_STARTS = [0, 3, 11, 19, 24];
+const TOTAL = QUESTIONS.length; // 27
+
+let currentQ = 0;
+let scores = [];
+let answers = {};
+let multiSelected = {};
+let totalScore = 0;
+
+// ─── BLOCK DETECTION ─────────────────────────────────────────
+function getBlockIndex(qIdx) {
+  let b = 0;
+  for(let i = BLOCK_STARTS.length - 1; i >= 0; i--) {
+    if(qIdx >= BLOCK_STARTS[i]) { b = i; break; }
+  }
+  return b;
+}
+
+function updateHeader() {
+  const pct = Math.round((currentQ / TOTAL) * 100);
+  document.getElementById('q-counter').textContent = `Pergunta ${currentQ + 1} de ${TOTAL}`;
+  document.getElementById('quiz-progress').style.width = pct + '%';
+  document.getElementById('quiz-pct').textContent = pct + '%';
+
+  const bi = getBlockIndex(currentQ);
+  const indicator = document.getElementById('block-indicator');
+  indicator.textContent = '';
+  indicator.className = 'block-indicator ' + BLOCKS[bi].cls;
+  indicator.innerHTML = BLOCKS[bi].label;
+}
+
+// ─── RENDER QUESTION ─────────────────────────────────────────
+function renderQuestion(idx, direction = 'right') {
+  const q = QUESTIONS[idx];
+  const container = document.getElementById('question-container');
+
+  // Exit animation
+  if(container.firstChild) {
+    container.firstChild.style.animation = direction === 'right'
+      ? 'slideOutLeft 0.28s ease forwards'
+      : 'slideOutRight 0.28s ease forwards';
+    setTimeout(() => buildQuestion(q, container, direction), 280);
+  } else {
+    buildQuestion(q, container, direction);
+  }
+
+  updateHeader();
+}
+
+function buildQuestion(q, container, direction) {
+  container.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'question-card';
+  card.style.animation = direction === 'right'
+    ? 'slideInRight 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards'
+    : 'slideInLeft 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards';
+
+  // Question number
+  const qNum = document.createElement('div');
+  qNum.className = 'question-number-badge';
+  qNum.textContent = currentQ + 1;
+  card.appendChild(qNum);
+
+  // Question text
+  const qText = document.createElement('div');
+  qText.className = 'question-text';
+  qText.textContent = q.text;
+  card.appendChild(qText);
+
+  // Subtitle
+  if(q.subtitle) {
+    const sub = document.createElement('div');
+    sub.className = 'question-subtitle';
+    sub.innerHTML = '📌 ' + q.subtitle;
+    card.appendChild(sub);
+  }
+
+  // Multi-select hint
+  if(q.multi) {
+    const hint = document.createElement('div');
+    hint.className = 'multi-select-hint';
+    hint.innerHTML = '☑️ Selecione todas as opções que se aplicam';
+    card.appendChild(hint);
+    multiSelected[currentQ] = multiSelected[currentQ] || [];
+  }
+
+  // Options
+  const optList = document.createElement('div');
+  optList.className = 'options-list';
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn ripple-container' + (q.multi ? ' multi' : '');
+
+    if(q.multi) {
+      // Checkbox
+      const cb = document.createElement('div');
+      cb.className = 'option-checkbox';
+      cb.textContent = '✓';
+      btn.appendChild(cb);
+    } else {
+      // Letter
+      const letter = document.createElement('div');
+      letter.className = 'option-letter';
+      letter.textContent = String.fromCharCode(65 + i);
+      btn.appendChild(letter);
+    }
+
+    // Text
+    const span = document.createElement('span');
+    span.textContent = (opt.icon ? opt.icon + ' ' : '') + opt.text;
+    btn.appendChild(span);
+
+    if(!q.multi) {
+      // Check mark
+      const check = document.createElement('span');
+      check.className = 'option-check';
+      check.textContent = '✓';
+      btn.appendChild(check);
+    }
+
+    // Pre-select if already answered
+    if(q.multi && multiSelected[currentQ] && multiSelected[currentQ].includes(i)) {
+      btn.classList.add('selected');
+    }
+    if(!q.multi && answers[currentQ] === i) {
+      btn.classList.add('selected');
+    }
+
+    // Ripple
+    btn.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const circle = document.createElement('span');
+      circle.className = 'ripple-circle';
+      const size = Math.max(rect.width, rect.height);
+      circle.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
+      this.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
+    });
+
+    if(q.multi) {
+      btn.addEventListener('click', () => toggleMulti(btn, i, q));
+    } else {
+      btn.addEventListener('click', () => selectOption(btn, i, q));
+    }
+
+    optList.appendChild(btn);
+  });
+
+  card.appendChild(optList);
+
+  // Multi next button
+  if(q.multi) {
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'multi-next-btn';
+    nextBtn.id = 'multi-next';
+    const prevSelected = multiSelected[currentQ] && multiSelected[currentQ].length > 0;
+    if(prevSelected) nextBtn.classList.add('active');
+    nextBtn.innerHTML = 'Continuar <span>→</span>';
+    nextBtn.addEventListener('click', () => {
+      if(nextBtn.classList.contains('active')) advanceQuestion();
+    });
+    card.appendChild(nextBtn);
+  }
+
+  container.appendChild(card);
+}
+
+// ─── INTERACTION ─────────────────────────────────────────────
+function selectOption(btn, idx, q) {
+  // Deselect all
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[currentQ] = idx;
+  totalScore += q.options[idx].score;
+
+  // Haptic
+  if(navigator.vibrate) navigator.vibrate(40);
+
+  // Check if we cross a block boundary
+  const currentBlock = getBlockIndex(currentQ);
+  const nextBlock    = currentQ + 1 < TOTAL ? getBlockIndex(currentQ + 1) : -1;
+
+  setTimeout(() => {
+    if(nextBlock !== -1 && nextBlock !== currentBlock && BLOCKS[currentBlock].unlock) {
+      showBlockUnlock(BLOCKS[currentBlock].unlock, () => {
+        currentQ++;
+        renderQuestion(currentQ);
+      });
+    } else {
+      advanceQuestion();
+    }
+  }, 350);
+}
+
+function toggleMulti(btn, idx) {
+  btn.classList.toggle('selected');
+  if(!multiSelected[currentQ]) multiSelected[currentQ] = [];
+  const sel = multiSelected[currentQ];
+  const pos = sel.indexOf(idx);
+  if(pos === -1) sel.push(idx);
+  else sel.splice(pos, 1);
+
+  const nextBtn = document.getElementById('multi-next');
+  if(nextBtn) {
+    nextBtn.classList.toggle('active', sel.length > 0);
+  }
+}
+
+function advanceQuestion() {
+  if(currentQ < TOTAL - 1) {
+    const currentBlock = getBlockIndex(currentQ);
+    const nextBlock    = getBlockIndex(currentQ + 1);
+
+    if(nextBlock !== currentBlock && BLOCKS[currentBlock].unlock) {
+      showBlockUnlock(BLOCKS[currentBlock].unlock, () => {
+        currentQ++;
+        renderQuestion(currentQ);
+      });
+    } else {
+      currentQ++;
+      renderQuestion(currentQ);
+    }
+  } else {
+    finishQuiz();
+  }
+}
+
+// ─── BLOCK UNLOCK ANIMATION ───────────────────────────────────
+function showBlockUnlock(unlock, callback) {
+  const container = document.getElementById('question-container');
+  container.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'block-unlock card';
+  wrap.innerHTML = `
+    <div class="block-unlock-icon">${unlock.icon}</div>
+    <div class="block-unlock-title gradient-text">${unlock.title}</div>
+    <div class="block-unlock-text">${unlock.text}</div>
+    <button class="block-unlock-continue btn">
+      Continuar <span>→</span>
+    </button>
+  `;
+  container.appendChild(wrap);
+
+  wrap.querySelector('button').addEventListener('click', callback);
+
+  // Auto-advance after 3s
+  setTimeout(callback, 3000);
+}
+
+// ─── FINISH ───────────────────────────────────────────────────
+function finishQuiz() {
+  sessionStorage.setItem('quiz_score', totalScore);
+  sessionStorage.setItem('quiz_answers', JSON.stringify(answers));
+  sessionStorage.setItem('quiz_multi', JSON.stringify(multiSelected));
+  sessionStorage.setItem('has_diagnosis', JSON.stringify(true));
+
+  // Progress to 100%
+  document.getElementById('quiz-progress').style.width = '100%';
+  document.getElementById('quiz-pct').textContent = '100%';
+
+  // Fade out and redirect
+  document.body.style.transition = 'opacity 0.6s';
+  document.body.style.opacity = '0';
+  setTimeout(() => { window.location.href = 'loading.html'; }, 600);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+renderQuestion(0);
+</script>
+</body>
+</html>

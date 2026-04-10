@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Protocolo Movimento da Esponja — Acesso por R$ 19,90</title>
+  <meta name="description" content="O Protocolo Movimento da Esponja: 15 minutos diários para derreter a ferrugem das suas articulações e dormir a noite toda — sem remédios, sem academia.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      background: #f8fafc;
+      color: #1a1a2e;
+      font-family: var(--font-body);
+    }
+    * { box-sizing: border-box; }
+
+    /* Section alternation */
+    .s-dark { background: linear-gradient(160deg, #0d1526 0%, #111c30 100%); color: var(--text-primary); }
+    .s-white { background: #ffffff; }
+    .s-light { background: #f0f9ff; }
+    .s-cream { background: #fffbeb; }
+
+    /* ─── URGENCY BAR ─── */
+    .top-bar {
+      background: linear-gradient(90deg, #7c3aed, #1e4d8c, #059669, #1e4d8c, #7c3aed);
+      background-size: 400% 100%;
+      animation: shimmer 4s linear infinite;
+      padding: 0.6rem var(--space-md);
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.02em;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+
+    /* ─── HERO SECTION ─── */
+    .sales-hero {
+      background: linear-gradient(160deg, #0d1526 0%, #111c30 100%);
+      padding: var(--space-2xl) var(--space-md);
+      text-align: center;
+      color: var(--text-primary);
+      border-bottom: 3px solid var(--color-amber);
+    }
+    .confirmed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.4);
+      border-radius: var(--radius-full);
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-green-light);
+      margin-bottom: var(--space-lg);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .sales-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.2;
+      max-width: 700px;
+      margin: 0 auto var(--space-md);
+    }
+    .sales-subheadline {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin: 0 auto var(--space-xl);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    /* ─── OPEN LETTER ─── */
+    .open-letter-section {
+      background: #fff;
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .letter-container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .letter-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: var(--space-xl);
+      line-height: 1.3;
+    }
+    .letter-body {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: #374151;
+    }
+    .letter-body p { margin-bottom: var(--space-lg); }
+    .letter-body strong { color: #1a1a2e; font-weight: 700; }
+    .proof-box {
+      border-left: 4px solid var(--color-amber);
+      background: #fffbeb;
+      padding: var(--space-lg) var(--space-xl);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: var(--space-xl) 0;
+    }
+    .proof-box p {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #92400e;
+      margin: 0;
+    }
+
+    /* ─── MECHANISM ─── */
+    .mechanism-section {
+      background: linear-gradient(160deg, #0d1526, #111c30);
+      color: var(--text-primary);
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .mechanism-container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .mechanism-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 800;
+      margin-bottom: var(--space-xl);
+      text-align: center;
+      line-height: 1.3;
+    }
+    .mechanism-body {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    .mechanism-body p { margin-bottom: var(--space-md); }
+    .mechanism-alert {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+      font-weight: 600;
+      color: #fca5a5;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .cortisol-image {
+      width: 100%;
+      max-width: 520px;
+      border-radius: var(--radius-xl);
+      margin: var(--space-xl) auto;
+      display: block;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      border: 1px solid var(--color-border);
+    }
+
+    /* ─── PRODUCT ─── */
+    .product-section {
+      background: #fff;
+      padding: var(--space-3xl) var(--space-md);
+      text-align: center;
+    }
+    .product-section .section-title { color: #1a1a2e; }
+    .product-intro {
+      font-size: 0.95rem;
+      color: #374151;
+      max-width: 560px;
+      margin: 0 auto var(--space-xl);
+      line-height: 1.75;
+    }
+    .product-mockup {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto var(--space-xl);
+      display: block;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: float-slow 6s ease-in-out infinite;
+    }
+    .product-name {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #1a1a2e;
+      margin-bottom: 0.5rem;
+    }
+    .product-tagline {
+      font-size: 1rem;
+      color: var(--color-amber);
+      font-weight: 600;
+      margin-bottom: var(--space-xl);
+    }
+
+    .how-it-works-grid {
+      max-width: 600px;
+      margin: 0 auto var(--space-xl);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .how-step {
+      display: flex;
+      gap: var(--space-md);
+      align-items: flex-start;
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      text-align: left;
+    }
+    .how-step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      font-weight: 900;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .how-step-text {
+      font-size: 0.925rem;
+      color: #065f46;
+      line-height: 1.6;
+    }
+    .how-step-text strong { color: #064e3b; }
+
+    /* ─── BENEFITS ─── */
+    .benefits-section {
+      background: linear-gradient(160deg, #0d1526, #111c30);
+      color: var(--text-primary);
+      padding: var(--space-3xl) var(--space-md);
+    }
+
+    /* ─── PROOF ─── */
+    .proof-section {
+      background: #f7fafc;
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .proof-section .section-title { color: #1a1a2e; }
+    .whatsapp-container {
+      max-width: 520px;
+      margin: 0 auto;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ctext y='45' font-size='50' opacity='.03'%3E💬%3C/text%3E%3C/svg%3E"),
+        #e5ddd5;
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .wa-title {
+      font-size: 0.75rem;
+      color: #667781;
+      text-align: center;
+      margin-bottom: var(--space-md);
+      font-weight: 500;
+    }
+
+    /* ─── CHART ─── */
+    .chart-section {
+      background: linear-gradient(160deg, #0d1526, #111c30);
+      color: var(--text-primary);
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .chart-container {
+      max-width: 560px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+    }
+
+    /* ─── PRICING ─── */
+    .pricing-section {
+      background: #fff;
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .price-anchor {
+      font-size: 0.9rem;
+      color: #374151;
+      text-align: center;
+      max-width: 500px;
+      margin: 0 auto var(--space-xl);
+      line-height: 1.7;
+    }
+    .crossed {
+      text-decoration: line-through;
+      color: #9ca3af;
+      font-weight: 700;
+    }
+
+    /* ─── FAQ ─── */
+    .faq-section {
+      background: linear-gradient(160deg, #0d1526, #111c30);
+      color: var(--text-primary);
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .faq-section .section-title { color: var(--text-primary); }
+
+    /* ─── FINAL CTA ─── */
+    .final-cta-section {
+      background: linear-gradient(160deg, #065f46, #059669, #10b981);
+      padding: var(--space-3xl) var(--space-md);
+      text-align: center;
+      color: white;
+    }
+    .final-cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 900;
+      margin-bottom: var(--space-md);
+      line-height: 1.3;
+    }
+    .final-cta-sub {
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 480px;
+      margin: 0 auto var(--space-xl);
+      line-height: 1.7;
+    }
+
+    /* ─── FOOTER ─── */
+    .site-footer {
+      background: #0d1526;
+      color: var(--text-muted);
+      padding: var(--space-xl) var(--space-md);
+      text-align: center;
+      font-size: 0.75rem;
+      line-height: 1.6;
+    }
+
+    /* ─── JS REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- URGENCY TOP BAR -->
+<div class="top-bar">
+  ⏰ ACESSO ESPECIAL — R$ 19,90 POR TEMPO LIMITADO &nbsp;|&nbsp; Proteção: 🔒 Pagamento Seguro
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="sales-hero">
+  <div class="confirmed-badge">✅ SEU DIAGNÓSTICO ESTÁ CONFIRMADO</div>
+  <h1 class="sales-headline">
+    O Segredo do <span class="gradient-text">"WD-40 Biológico"</span>: Como Derreter a Ferrugem das Suas Articulações em Apenas <span class="gradient-text-green">15 Minutos...</span>
+  </h1>
+  <p class="sales-subheadline">
+    ...Sem precisar pisar em uma academia, sem suar e sem depender de remédios que destroem o seu estômago.
+  </p>
+  <a href="#comprar" class="buy-btn" style="max-width:520px;display:inline-block;margin-bottom:1rem;">
+    💳 SIM! QUERO DESTRAVAR MEU CORPO AGORA (R$ 19,90)
+  </a>
+  <div class="buy-btn-sub">🔒 Pagamento 100% Seguro | Acesso Imediato no E-mail | Sem Mensalidades</div>
+</section>
+
+<!-- ─── OPEN LETTER ─── -->
+<section class="open-letter-section reveal">
+  <div class="letter-container">
+    <h2 class="letter-title">Você não está "ficando velha". O seu corpo apenas cansou de carregar o mundo nas costas.</h2>
+    <div class="letter-body">
+      <p>Olá! Se você chegou até aqui, eu sei exatamente o que você está sentindo.</p>
+      <p>Você acorda parecendo que levou uma surra durante a noite. A lombar queima, os joelhos estalam, e você precisa de alguns minutos sentada na beira da cama apenas para tomar coragem de ficar em pé.</p>
+      <p>Durante o dia, você é o pilar da sua casa. Resolve os problemas dos filhos, do marido, do trabalho. Você cuida de todos... <strong>mas no fim do dia, quem cuida de você?</strong></p>
+      <p>Quando a casa finalmente silencia e você deita a cabeça no travesseiro, o seu corpo clama por descanso, mas a sua mente liga no 220v. A ansiedade bate, o coração acelera e o "apagão" não vem.</p>
+      <div class="proof-box">
+        <p>🔬 A culpa NÃO é sua. E eu posso provar — com base no que o seu diagnóstico acabou de revelar sobre o estado atual do seu sistema nervoso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MECHANISM ─── -->
+<section class="mechanism-section reveal">
+  <div class="mechanism-container">
+    <h2 class="mechanism-title">
+      O que as suas respostas revelaram: a <span class="gradient-text">Síndrome da Fáscia Seca</span>
+    </h2>
+    <div class="mechanism-body">
+      <p>Anos engolindo o estresse e se sacrificando pelos outros colocaram o seu sistema nervoso em estado de <strong>"Alerta Máximo"</strong>. Isso faz o seu corpo despejar Cortisol no seu sangue 24 horas por dia.</p>
+      <p>Esse cortisol age como <strong>um secador de cabelo apontado para as suas articulações</strong>. Ele evapora o líquido natural das suas juntas e resseca a sua Fáscia (a pele que envolve seus músculos). Seus ossos começam a raspar.</p>
+    </div>
+
+    <img src="imgs/cortisol_diagram.png" alt="Fáscia Hidratada vs Fáscia Seca pelo Cortisol" class="cortisol-image" loading="lazy">
+
+    <div class="mechanism-alert">
+      ❌ É por isso que Dorflex, Torsilax e relaxantes musculares não resolvem! Eles apenas "dopam" a sua cabeça por algumas horas para você não sentir a dor, mas eles <strong>não devolvem uma única gota de lubrificação</strong> para as suas juntas.
+    </div>
+  </div>
+</section>
+
+<!-- ─── CHART ─── -->
+<section class="chart-section reveal">
+  <div style="max-width:680px;margin:0 auto;text-align:center;">
+    <h2 class="section-title" style="margin-bottom:var(--space-md);">O que acontece com suas articulações<br><span class="gradient-text">com e sem o protocolo</span></h2>
+    <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:var(--space-xl);">Comparativo de lubrificação articular e qualidade do sono — baseado em dados reais de usuárias</p>
+    <div class="chart-container">
+      <canvas id="jointChart" height="280"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRODUCT ─── -->
+<section class="product-section reveal">
+  <div style="max-width:680px;margin:0 auto;">
+    <div class="badge badge-green" style="margin:0 auto var(--space-lg);display:inline-flex;">🌱 A SOLUÇÃO</div>
+    <h2 class="section-title" style="color:#1a1a2e;">
+      Para voltar a viver sem dor e dormir a noite toda, você não precisa de mais remédios.<br>
+      <span style="color:var(--color-primary);">Você precisa acionar o Freio de Mão Biológico do seu corpo.</span>
+    </h2>
+
+    <img src="imgs/product_mockup.png" alt="Protocolo Movimento da Esponja — Produto Digital" class="product-mockup" loading="lazy">
+
+    <div class="product-name">PROTOCOLO MOVIMENTO DA ESPONJA</div>
+    <div class="product-tagline">O seu ritual diário de 15 minutos de alívio e paz profunda</div>
+
+    <p class="product-intro">
+      Nós extraímos a essência terapêutica da medicina oriental e criamos um passo a passo em vídeo, de apenas 15 minutos, focado 100% em mulheres maduras.
+    </p>
+
+    <div class="how-it-works-grid">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <div class="how-step-text">Você faz os <strong>micromovimentos circulares</strong> na sala da sua casa — sem impacto, sem academia</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <div class="how-step-text">Seu corpo <strong>espreme toxinas e inflamação</strong> para fora das articulações, como uma esponja</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <div class="how-step-text">Quando relaxa, o corpo <strong>"suga" lubrificação nova</strong> — é o WD-40 biológico nas suas dobradiças enferrujadas</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <div class="how-step-text">O ritmo suave avisa ao cérebro: <strong>"Você está segura"</strong> — o estresse derrete e o sono profundo vem no automático</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BENEFITS ─── -->
+<section class="benefits-section reveal">
+  <div style="max-width:680px;margin:0 auto;text-align:center;">
+    <h2 class="section-title" style="margin-bottom:var(--space-xl);">O que você recebe <span class="gradient-text-green">hoje</span></h2>
+    <div class="benefits-grid">
+      <div class="benefit-item">
+        <div class="benefit-icon-wrap">💥</div>
+        <div class="benefit-text">
+          <div class="benefit-title">100% Anti-Impacto e Seguro</div>
+          <div class="benefit-desc">Não tem pulo, não precisa deitar no chão duro. Pode fazer de pijama, de pé, ou até mesmo sentada numa cadeira.</div>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon-wrap">🌅</div>
+        <div class="benefit-text">
+          <div class="benefit-title">Fim das Dores e Rigidez Matinal</div>
+          <div class="benefit-desc">Volte a se abaixar, brincar com seus netos e varrer a casa sem gemer de dor e sem pedir ajuda.</div>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon-wrap">🌙</div>
+        <div class="benefit-text">
+          <div class="benefit-title">Botão de Desligar a Mente</div>
+          <div class="benefit-desc">Experimente a sensação deliciosa de encostar no travesseiro, calar a ansiedade e apagar em poucos minutos.</div>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon-wrap">⏱</div>
+        <div class="benefit-text">
+          <div class="benefit-title">Tempo Inegociável</div>
+          <div class="benefit-desc">São apenas 15 minutos. Cabe na rotina da mulher mais ocupada do mundo — sem suor, sem trocar de roupa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROOF / WHATSAPP TESTIMONIALS ─── -->
+<section class="proof-section reveal">
+  <div style="max-width:680px;margin:0 auto;text-align:center;">
+    <h2 class="section-title" style="color:#1a1a2e;margin-bottom:0.5rem;">Elas também achavam que<br>não tinha mais jeito.</h2>
+    <p style="font-size:0.9rem;color:#64748b;margin-bottom:var(--space-xl);">Veja o que aconteceu depois de alguns dias com o protocolo:</p>
+
+    <div class="whatsapp-container">
+      <div class="wa-title">📱 Mensagens reais no WhatsApp</div>
+      <div class="whatsapp-testimonials">
+        <div class="whatsapp-msg">
+          🗣 "Eu não aguentava mais chorar de dor no banho. Os 15 minutos de vocês salvaram a minha lombar. E eu finalmente parei com o Zolpidem!"
+          <div class="whatsapp-meta">Sônia M., 56 anos · ✓✓</div>
+        </div>
+        <div class="whatsapp-msg">
+          🗣 "Tentei academia, machuquei o joelho. Fui pro Movimento da Esponja e parece que tiraram o peso do mundo dos meus ombros. Faço na cadeira assistindo novela!"
+          <div class="whatsapp-meta">Márcia R., 61 anos · ✓✓</div>
+        </div>
+        <div class="whatsapp-msg">
+          🗣 "Em 12 dias, reduzi os remédios pela metade. O médico me perguntou o que eu tinha feito diferente. Me sinto como eu tinha 40 anos de novo."
+          <div class="whatsapp-meta">Marlene F., 53 anos · ✓✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="pricing-section reveal" id="comprar">
+  <div style="max-width:600px;margin:0 auto;text-align:center;">
+    <div class="badge badge-amber" style="display:inline-flex;margin-bottom:var(--space-lg);">💳 OFERTA ESPECIAL</div>
+    <h2 class="section-title" style="color:#1a1a2e;">Acesso completo ao Protocolo<br>Movimento da Esponja</h2>
+
+    <div class="price-anchor">
+      Se você fosse a um especialista em dor, gastaria fácil mais de <span class="crossed">R$ 300 a R$ 500</span>.<br>
+      Até mesmo as suas idas à farmácia custam mais do que isso por mês.<br><br>
+      Mas o seu Diagnóstico foi aprovado no nosso sistema e queremos que você comece <strong>HOJE</strong>.
+    </div>
+
+    <div class="pricing-card">
+      <p class="price-old">De R$ 97,00</p>
+      <p class="price-new">R$ 19<span style="font-size:2rem;">,90</span></p>
+      <p class="price-desc">Pagamento único · Sem mensalidades · Acesso imediato</p>
+      <div class="price-label">
+        💡 Isso é menos do que um pão de queijo com café na padaria<br>para ter as suas noites de sono e o seu corpo de volta.
+      </div>
+
+      <a href="#" class="buy-btn" id="main-buy-btn" onclick="handleBuy(event)">
+        💳 SIM! QUERO DESTRAVAR MEU CORPO AGORA (R$ 19,90)
+      </a>
+      <div class="buy-btn-sub" style="margin-top:0.75rem;">
+        🔒 Compra 100% Segura · Acesso Enviado no E-mail Imediatamente
+      </div>
+    </div>
+
+    <!-- Guarantee -->
+    <div class="guarantee-card">
+      <div class="guarantee-icon">🛡️</div>
+      <div>
+        <div class="guarantee-title">Nossa Garantia "Dor Zero" de 7 Dias</div>
+        <div class="guarantee-text">
+          Acesse o protocolo, faça os movimentos por 7 dias. Se você não sentir a rigidez derretendo, se você não dormir mais profundamente logo nas primeiras noites... <strong>basta nos mandar um e-mail e devolvemos cada centavo dos seus R$ 19,90.</strong> O risco é todo nosso.
+        </div>
+      </div>
+    </div>
+
+    <!-- Security badges -->
+    <div class="security-badges" style="margin-top:var(--space-xl);">
+      <div class="security-badge">🔒 SSL Seguro</div>
+      <div class="security-badge">🛡️ Garantia 7 Dias</div>
+      <div class="security-badge">📱 Acesso Imediato</div>
+      <div class="security-badge">❌ Sem Assinatura</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="faq-section reveal">
+  <div style="max-width:680px;margin:0 auto;">
+    <h2 class="section-title" style="margin-bottom:var(--space-xl);">Perguntas frequentes</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          "Eu sou muito dura e sem flexibilidade. Vou conseguir fazer?"
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Absolutamente sim! O protocolo foi criado exatamente para mulheres com o corpo rígido. Não tem contorcionismo, não precisa ter flexibilidade. Se você consegue levantar os braços, você consegue fazer. As primeiras usuárias a relatar melhora foram justamente as mais "endurecidas".
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          "Preciso comprar algum equipamento?"
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Nenhum. Você só precisa do seu próprio corpo, uma roupa confortável (pode ser de pijama) e uma cadeira se preferir fazer sentada. Nada de halteres, tapetes especiais ou roupas de academia.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          "Tenho artrose grau 2 / bico de papagaio / hérnia de disco. Posso fazer?"
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Sim! Como o método é de ZERO IMPACTO e focado em lubrificação e descompressão, ele é altamente recomendado para aliviar a tensão ao redor dessas áreas sem forçar a articulação em si. Inclusive, mulheres com diagnóstico confirmado são as que mais relatam transformação rápida.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          "A minha rotina é maluca, não tenho tempo."
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          São apenas 15 a 10 minutos diários. Você não precisa lavar o cabelo ou trocar de roupa porque você não vai suar. Pode ser feito ao acordar, antes de dormir, ou até durante os commercials da novela. É o seu SOS rápido de alívio diário.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          "Como recebo o acesso depois de comprar?"
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Imediatamente após a confirmação do pagamento, você recebe o link de acesso no e-mail cadastrado. Se não encontrar na caixa de entrada, verifique o spam. Em caso de dúvidas, entre em contato pelo e-mail de suporte.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─── -->
+<section class="final-cta-section reveal">
+  <div style="max-width:600px;margin:0 auto;">
+    <div class="final-cta-title">
+      Você já carregou essa dor por tempo demais. Hoje, é a sua vez.
+    </div>
+    <p class="final-cta-sub">
+      15 minutos. Sem sair de casa. Sem academia. Sem remédios.<br>
+      O protocolo que pode mudar tudo começa por apenas R$ 19,90.
+    </p>
+    <a href="#" class="buy-btn" onclick="handleBuy(event)" style="max-width:520px;background:linear-gradient(135deg,#fff,#f0fdf4);color:#065f46;box-shadow:0 0 40px rgba(255,255,255,0.3),0 8px 32px rgba(0,0,0,0.2);">
+      💳 QUERO GARANTIR MEU ACESSO E VOLTAR A DORMIR EM PAZ (R$ 19,90)
+    </a>
+    <div style="margin-top:var(--space-md);font-size:0.78rem;opacity:0.8;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+      🛡️ Garantia de 7 dias · Acesso imediato · Sem risco
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="site-footer">
+  <p>© 2025 Protocolo Movimento da Esponja. Todos os direitos reservados.</p>
+  <p style="margin-top:0.5rem;">Os resultados apresentados são individuais e podem variar. Este produto não substitui acompanhamento médico.</p>
+  <p style="margin-top:0.5rem;"><a href="#" style="color:var(--text-muted);">Política de Privacidade</a> · <a href="#" style="color:var(--text-muted);">Termos de Uso</a> · <a href="mailto:suporte@exemplo.com" style="color:var(--text-muted);">Suporte</a></p>
+</footer>
+
+<!-- WhatsApp Float Button -->
+<a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank" rel="noopener" title="Falar no WhatsApp">
+  💬
+</a>
+
+<script>
+// ─── FAQ ACCORDION ────────────────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// ─── CHART (CORTISOL VS LUBRICATION) ─────────────────────────
+const ctx = document.getElementById('jointChart').getContext('2d');
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Sem protocolo', 'Sem protocolo', 'Sem protocolo', 'Sem protocolo', 'Sem protocolo'],
+    datasets: [
+      {
+        label: 'Nível de Dor (Sem Protocolo)',
+        data: [30, 45, 55, 65, 80],
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.1)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#ef4444'
+      },
+      {
+        label: 'Lubrificação Articular (Com Protocolo)',
+        data: [30, 45, 35, 22, 12],
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,0.1)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#10b981'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#94a3b8',
+          font: { family: 'Inter', size: 11 },
+          padding: 16
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(17,28,48,0.95)',
+        titleColor: '#f1f5f9',
+        bodyColor: '#94a3b8',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,0.05)' }
+      },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        title: {
+          display: true,
+          text: 'Nível (%)',
+          color: '#64748b',
+          font: { size: 10 }
+        }
+      }
+    }
+  }
+});
+
+// ─── SCROLL REVEAL ────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── BUY HANDLER (replace with actual checkout URL) ───────────
+function handleBuy(e) {
+  e.preventDefault();
+  // Replace this URL with your actual checkout:
+  // window.location.href = 'https://pay.hotmart.com/...';
+  alert('🎉 Redirecionar para o checkout aqui!\n\nSubstitua a URL no arquivo oferta.html na função handleBuy().');
+}
+
+// ─── RIPPLE EFFECTS ───────────────────────────────────────────
+document.querySelectorAll('.buy-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-circle';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `
+      position:absolute;
+      width:${size}px;height:${size}px;
+      left:${e.clientX-rect.left-size/2}px;
+      top:${e.clientY-rect.top-size/2}px;
+      background:rgba(255,255,255,0.25);
+      border-radius:50%;
+      animation:ripple 0.6s linear;
+      pointer-events:none;
+    `;
+    this.style.position = 'relative';
+    this.style.overflow = 'hidden';
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+</script>
+</body>
+</html>
